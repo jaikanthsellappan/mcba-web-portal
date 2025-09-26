@@ -12,8 +12,8 @@ using mcbaMVC.Data;
 namespace mcbaMVC.Migrations
 {
     [DbContext(typeof(MCBAContext))]
-    [Migration("20250925163444_AddCustomerLoginRelationship")]
-    partial class AddCustomerLoginRelationship
+    [Migration("20250926095108_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
