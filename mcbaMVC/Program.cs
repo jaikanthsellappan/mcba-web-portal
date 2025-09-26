@@ -20,6 +20,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Run data seeding at startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MCBAContext>();
+    var httpClient = new HttpClient();
+
+    var seeder = new DataSeeder(context, httpClient);
+    await seeder.SeedCustomersAsync();
+}
+
 app.UseHttpsRedirection();
 app.UseRouting();
 

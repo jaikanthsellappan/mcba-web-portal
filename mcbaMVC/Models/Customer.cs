@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mcbaMVC.Models
 {
@@ -9,6 +10,7 @@ namespace mcbaMVC.Models
         /// Includes identity and contact information.
         /// </summary>
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Range(1000, 9999, ErrorMessage = "Customer ID must be exactly 4 digits long.")]
         public int CustomerID { get; set; }
 
@@ -34,6 +36,9 @@ namespace mcbaMVC.Models
         public string? Mobile { get; set; }
 
         public ICollection<Account> CustomerAccounts { get; set; } = new List<Account>();
+
+        // 🔹 Add this → 1-to-1 relationship with Login
+        public Login Login { get; set; } = null!;
 
     }
 }

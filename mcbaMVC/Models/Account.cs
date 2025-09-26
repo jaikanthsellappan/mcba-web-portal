@@ -10,6 +10,7 @@ namespace mcbaMVC.Models
     public class Account
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         [Range(1000, 9999, ErrorMessage = "Account number should be a 4-digit code.")]
         public int AccountNumber { get; set; }
