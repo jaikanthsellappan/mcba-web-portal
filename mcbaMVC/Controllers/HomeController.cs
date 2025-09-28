@@ -13,9 +13,9 @@ namespace mcbaMVC.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+       public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Login");
         }
 
         public IActionResult Privacy()

@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Login";
+    var error = TempData["LoginError"] as string;
+}
+
+<div class="login-bg d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+                <div class="card shadow-lg border-0 rounded-4 p-4">
+                    <div class="text-center mb-3">
+                        <h2 class="fw-bold mb-1">MCBA Internet Banking</h2>
+                        <p class="text-muted mb-0">Secure access to your accounts</p>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(error))
+                    {
+                        <div class="alert alert-danger py-2" role="alert">
+                            @error
+                        </div>
+                    }
+
+                    <form method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="loginId" class="form-label">Login ID</label>
+                            <input type="text"
+                                   class="form-control form-control-lg"
+                                   id="loginId"
+                                   name="loginId"
+                                   placeholder="8-digit Login ID"
+                                   required />
+                            <div class="form-text">Use the 8 digits given to you by MCBA.</div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group input-group-lg">
+                                <input type="password"
+                                       class="form-control"
+                                       id="password"
+                                       name="password"
+                                       placeholder="Your password"
+                                       required />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePwd" aria-label="Show password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Sign in</button>
+
+                        <p class="text-center text-muted small mt-3 mb-0">
+                            By signing in you agree to the MCBA Internet Banking Terms &amp; Conditions.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const btn = document.getElementById('togglePwd');
+        const pwd = document.getElementById('password');
+        btn?.addEventListener('click', () => {
+            const showing = pwd.type === 'text';
+            pwd.type = showing ? 'password' : 'text';
+            btn.innerHTML = showing ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        });
+    </script>
+}
