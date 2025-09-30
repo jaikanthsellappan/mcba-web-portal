@@ -1,32 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
+using mcbaMVC.ViewModels;
 
 namespace mcbaMVC.Controllers
 {
     public class LoginController : Controller
     {
-        // GET: /Login
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        // POST: /Login
         [HttpPost]
-        public IActionResult Index(string loginId, string password)
+        public IActionResult Index(LoginViewModel model)
         {
-            // For now, just a placeholder
-            // Your friend will implement authentication here.
-            
-            // Redirect to Dashboard (Accounts page) after successful login
-            return RedirectToAction("Index", "Accounts");
-        }
+            if (!ModelState.IsValid)
+            {
+                return View(model); // Return with validation errors
+            }
 
-        // GET: /Login/Logout
-        public IActionResult Logout()
-        {
-            // TODO: Add session clear later
-            return RedirectToAction("Index", "Home");
+            // Dummy check - replace later with DB/auth logic
+            if (model.LoginId == "12345678" && model.Password == "password")
+            {
+                // Redirect to home/dashboard if success
+                return RedirectToAction("Index", "Home");
+            }
+
+            TempData["LoginError"] = "Invalid login credentials";
+            return View(model);
         }
     }
 }

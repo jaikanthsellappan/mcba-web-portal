@@ -35,13 +35,72 @@ body {
 .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
-.login-bg {
-  min-height: calc(100vh - 56px); /* account for navbar height */
-  background-image: url("/images/bank.jpg"); /* use the image you saved */
-  background-size: cover;
+
+/* Full-screen hero */
+.login-hero {
+  position: relative;
+  min-height: calc(100vh - 56px); /* full viewport minus navbar */
+  width: 100%;
+  overflow: hidden; /* hide blur edges */
+  margin-top: 0;
+}
+
+/* Background layer (only this is blurred) */
+.login-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/bank.jpg"); /* make sure this path/file exists */
   background-repeat: no-repeat;
-  background-position: center;
-  /* Optional overlay to improve text readability */
-  background-color: rgba(255, 255, 255, 0.6);
-  background-blend-mode: overlay;
+  background-size: cover;
+  background-position: 50% 12%; /* tweak to show “BANK” nicely */
+  filter: blur(2px) brightness(0.95);
+  transform: scale(1.06); /* avoids blur-edge halos */
+  z-index: 0;
+}
+
+/* Optional soft veil for contrast */
+.login-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.18);
+  z-index: 0;
+}
+
+/* Keep content/card above the blurred bg */
+.login-hero > * {
+  position: relative;
+  z-index: 1;
+}
+.login-hero .card {
+  position: relative;
+  z-index: 2;
+}
+
+/* Safety: prevent stray 1–2px horizontal scrollbars */
+html,
+body {
+  overflow-x: hidden;
+}
+/* kill any bottom margin on navbar */
+.navbar {
+  margin-bottom: 0 !important;
+}
+/* 1) Kill any spacing the navbar adds */
+.navbar {
+  margin-bottom: 0 !important;
+  border-bottom: 0 !important; /* removes the 1px border line */
+  box-shadow: none !important; /* removes the shadow gap */
+}
+
+/* 2) Make sure the first main section doesn't add padding/margin */
+header + main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 3) Belt-and-suspenders: overlap the hero by 1px to hide any subpixel seam */
+.login-hero {
+  margin-top: -1px; /* hides any remaining hairline */
 }

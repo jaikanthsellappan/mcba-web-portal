@@ -1,9 +1,10 @@
+@model mcbaMVC.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Login";
     var error = TempData["LoginError"] as string;
 }
 
-<div class="login-bg d-flex align-items-center">
+<div class="login-hero d-flex align-items-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-5">
@@ -20,31 +21,29 @@
                         </div>
                     }
 
-                    <form method="post" novalidate>
+                    <!-- Bind the form to the Index POST action -->
+                    <form asp-action="Index" method="post" novalidate>
+                        <!-- Model-level validation summary -->
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
                         <div class="mb-3">
-                            <label for="loginId" class="form-label">Login ID</label>
-                            <input type="text"
+                            <label asp-for="LoginId" class="form-label"></label>
+                            <input asp-for="LoginId"
                                    class="form-control form-control-lg"
-                                   id="loginId"
-                                   name="loginId"
-                                   placeholder="8-digit Login ID"
-                                   required />
+                                   placeholder="8-digit Login ID" />
+                            <span asp-validation-for="LoginId" class="text-danger"></span>
                             <div class="form-text">Use the 8 digits given to you by MCBA.</div>
                         </div>
 
                         <div class="mb-2">
-                            <label for="password" class="form-label">Password</label>
+                            <label asp-for="Password" class="form-label"></label>
                             <div class="input-group input-group-lg">
-                                <input type="password"
-                                       class="form-control"
-                                       id="password"
-                                       name="password"
-                                       placeholder="Your password"
-                                       required />
+                                <input asp-for="Password" class="form-control" placeholder="Your password" />
                                 <button class="btn btn-outline-secondary" type="button" id="togglePwd" aria-label="Show password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">Sign in</button>
@@ -60,9 +59,12 @@
 </div>
 
 @section Scripts {
+    @* client-side validation scripts *@
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
     <script>
         const btn = document.getElementById('togglePwd');
-        const pwd = document.getElementById('password');
+        const pwd = document.getElementById('Password'); // matches asp-for name
         btn?.addEventListener('click', () => {
             const showing = pwd.type === 'text';
             pwd.type = showing ? 'password' : 'text';
