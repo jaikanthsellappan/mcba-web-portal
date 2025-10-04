@@ -1,0 +1,41 @@
+@model mcbaMVC.ViewModels.TransferVM
+@{
+    ViewData["Title"] = "Transfer";
+}
+<h3>Transfer</h3>
+<hr />
+<form asp-action="Transfer" method="post">
+    @Html.AntiForgeryToken()
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="FromAccountNumber" class="form-label"></label>
+            <select asp-for="FromAccountNumber" class="form-select" asp-items="ViewBag.FromAccounts">
+                <option value="">-- choose your account --</option>
+            </select>
+            <span asp-validation-for="FromAccountNumber" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ToAccountNumber" class="form-label"></label>
+            <input asp-for="ToAccountNumber" class="form-control" placeholder="Destination account number" />
+            <span asp-validation-for="ToAccountNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 mt-3">
+        <label asp-for="Amount" class="form-label"></label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="2"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-primary">Review</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,31 @@
+@model mcbaMVC.ViewModels.WithdrawVM
+@{
+    ViewData["Title"] = "Withdraw";
+}
+<h3>Withdraw</h3>
+<hr />
+<form asp-action="Withdraw" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="AccountNumber" class="form-label"></label>
+        <select asp-for="AccountNumber" class="form-select" asp-items="ViewBag.Accounts">
+            <option value="">-- choose an account --</option>
+        </select>
+        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label"></label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label"></label>
+        <textarea asp-for="Comment" class="form-control" rows="2"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary">Review</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

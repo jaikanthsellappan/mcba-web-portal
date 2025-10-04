@@ -1,15 +1,14 @@
 ﻿@* Views/Home/Index.cshtml *@
 @using System.Collections;
 @using System.Globalization;
+
 @{
     ViewData["Title"] = "Home";
 
-    // ---- Read whatever the controller provides without breaking the page
+    // Read whatever the controller provides without breaking the page
     var model = ViewData.Model;
 
     string customerName = "Customer";
-
-    // 1) Prefer Model.CustomerName if present
     if (model != null)
     {
         var mt = model.GetType();
@@ -21,18 +20,16 @@
         }
         else
         {
-            // 2) Or Model.Customer.Name
             var pc = mt.GetProperty("Customer");
             var custObj = pc?.GetValue(model);
             if (custObj != null)
             {
                 var nameProp = custObj.GetType().GetProperty("Name");
-                var nameVal = nameProp?.GetValue(custObj) as string;
+                var nameVal  = nameProp?.GetValue(custObj) as string;
                 if (!string.IsNullOrWhiteSpace(nameVal)) customerName = nameVal!;
             }
         }
     }
-    // 3) Or ViewBag.CustomerName
     if (ViewBag.CustomerName is string vbName && !string.IsNullOrWhiteSpace(vbName))
         customerName = vbName;
 
@@ -48,19 +45,12 @@
         accountsObj = vbAcc;
 
     string Money(object? amount) =>
-        amount is IFormattable f ? f.ToString("C", CultureInfo.CurrentCulture)
-                                 : (amount?.ToString() ?? "-");
+        amount is IFormattable f
+            ? f.ToString("C", CultureInfo.CurrentCulture)
+            : (amount?.ToString() ?? "-");
 }
 
-<style>
-  .hero { background: linear-gradient(120deg,#eef4ff 0%,#f5faff 100%);
-          border:1px solid #e5eefb; border-radius:12px;
-          padding:1.5rem 1.75rem; margin-bottom:1rem; }
-  .muted { color:#6c757d; }
-  .card.clean { border-radius:12px; }
-</style>
-
-<section class="hero">
+<section class="home-hero">
   <h2 class="mb-1">Welcome, @customerName</h2>
   <div class="muted">Your accounts and quick actions are below.</div>
 </section>
@@ -68,93 +58,80 @@
 @if (accountsObj is null)
 {
     <div class="alert alert-info">
-        Your dashboard is ready. Once the controller supplies an <code>Accounts</code> list
-        (e.g., <code>IEnumerable&lt;Account&gt;</code> or a view model), your balances will appear here.
+        Your dashboard is ready. Once the controller supplies an <code>Accounts</code> list,
+        your balances will appear here.
     </div>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-2 g-3">
-    @foreach (var a in accountsObj)
-    {
-        var t = a!.GetType();
-
-        var accNum     = t.GetProperty("AccountNumber")?.GetValue(a);
-        var typeRawStr = t.GetProperty("AccountType")?.GetValue(a)?.ToString() ?? "";
-        var currentVal = 0m;
-        var available  = 0m;
-
-        // Prefer VM fields Current/Available if provided
-        var propCurrent = t.GetProperty("Current");
-        var propAvail   = t.GetProperty("Available");
-        if (propCurrent != null)
+    <div class="accounts-wrap">
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var a in accountsObj)
         {
-            currentVal = Convert.ToDecimal(propCurrent.GetValue(a) ?? 0m);
-        }
-        else
-        {
-            // Fall back to Account.Balance (your model has Balance)
-            var pBal = t.GetProperty("Balance");
-            currentVal = Convert.ToDecimal(pBal?.GetValue(a) ?? 0m);
-        }
+            var t = a!.GetType();
+            var accNum     = t.GetProperty("AccountNumber")?.GetValue(a);
+            var typeRawStr = t.GetProperty("AccountType")?.GetValue(a)?.ToString() ?? "";
+            var currentVal = 0m;
+            var available  = 0m;
 
-        if (propAvail != null)
-        {
-            available = Convert.ToDecimal(propAvail.GetValue(a) ?? 0m);
-        }
-        else
-        {
-            // Compute available from AccountType + current
-            var isChecking =
-                string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ||
-                typeRawStr.StartsWith("Check", StringComparison.OrdinalIgnoreCase);
-            available = isChecking ? Math.Max(0m, currentVal + 500m) : currentVal;
-        }
+            // Prefer VM fields Current/Available if provided
+            var propCurrent = t.GetProperty("Current");
+            var propAvail   = t.GetProperty("Available");
+            if (propCurrent != null)
+                currentVal = Convert.ToDecimal(propCurrent.GetValue(a) ?? 0m);
+            else
+                currentVal = Convert.ToDecimal(t.GetProperty("Balance")?.GetValue(a) ?? 0m);
 
-        var typeLabel =
-            string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ? "Checking" :
-            string.Equals(typeRawStr, "S", StringComparison.OrdinalIgnoreCase) ? "Savings"  :
-            (string.IsNullOrWhiteSpace(typeRawStr) ? "—" : typeRawStr);
+            if (propAvail != null)
+                available = Convert.ToDecimal(propAvail.GetValue(a) ?? 0m);
+            else
+            {
+                // If Checking, include overdraft headroom for "available"
+                var isChecking =
+                    string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ||
+                    typeRawStr.StartsWith("Check", StringComparison.OrdinalIgnoreCase);
+                available = isChecking ? Math.Max(0m, currentVal + 500m) : currentVal;
+            }
 
-        <div class="col">
-          <div class="card clean h-100 shadow-sm">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start">
-                <h5 class="card-title mb-2">Account #@accNum</h5>
-                <span class="badge text-bg-light border">@typeLabel</span>
+            var typeLabel =
+                string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ? "Checking" :
+                string.Equals(typeRawStr, "S", StringComparison.OrdinalIgnoreCase) ? "Savings"  :
+                (string.IsNullOrWhiteSpace(typeRawStr) ? "—" : typeRawStr);
+
+            <div class="col">
+              <div class="card clean h-100 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title mb-2">Account #@accNum</h5>
+                    <!-- plain Bootstrap badge (no custom colours) -->
+                    <span class="badge text-bg-light border">@typeLabel</span>
+                  </div>
+
+                  <p class="mb-1"><strong>Current balance:</strong> @Money(currentVal)</p>
+                  <p class="mb-0"><strong>Available balance:</strong> @Money(available)</p>
+                </div>
+
+                <!-- Per-account quick actions -->
+                <div class="card-footer bg-white">
+                  <a class="btn btn-sm btn-outline-primary"
+                     asp-controller="Statements" asp-action="Index"
+                     asp-route-accountNumber="@accNum">View statements</a>
+
+                  <a class="btn btn-sm btn-outline-secondary"
+                     asp-controller="Transactions" asp-action="Deposit"
+                     asp-route-accountNumber="@accNum">Deposit</a>
+
+                  <a class="btn btn-sm btn-outline-secondary"
+                     asp-controller="Transactions" asp-action="Withdraw"
+                     asp-route-accountNumber="@accNum">Withdraw</a>
+
+                  <a class="btn btn-sm btn-outline-secondary"
+                     asp-controller="Transactions" asp-action="Transfer"
+                     asp-route-fromAccountNumber="@accNum">Transfer</a>
+                </div>
               </div>
-              <p class="mb-1"><strong>Current balance:</strong> @Money(currentVal)</p>
-              <p class="mb-0"><strong>Available balance:</strong> @Money(available)</p>
             </div>
-            <div class="card-footer bg-white">
-              <a class="btn btn-sm btn-outline-primary"
-                 asp-controller="Statements" asp-action="Index"
-                 asp-route-accountNumber="@accNum">View statements</a>
-            </div>
-          </div>
+        }
         </div>
-    }
     </div>
 }
-
-<hr class="my-4"/>
-
-<section class="mb-4">
-  <div class="row g-2">
-    <div class="col-12 col-sm-6 col-lg-3">
-      <a class="btn btn-outline-primary w-100" asp-controller="Txn" asp-action="Deposit">Deposit</a>
-    </div>
-    <div class="col-12 col-sm-6 col-lg-3">
-      <a class="btn btn-outline-primary w-100" asp-controller="Txn" asp-action="Withdraw">Withdraw</a>
-    </div>
-    <div class="col-12 col-sm-6 col-lg-3">
-      <a class="btn btn-outline-primary w-100" asp-controller="Txn" asp-action="Transfer">Transfer</a>
-    </div>
-    <div class="col-12 col-sm-6 col-lg-3">
-      <a class="btn btn-outline-secondary w-100" asp-controller="Profile" asp-action="Index">My Profile</a>
-    </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <a asp-controller="Login" asp-action="Logout" class="btn btn-danger">Logout</a>
-        </div>
-  </div>
-</section>
