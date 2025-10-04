@@ -1,0 +1,111 @@
+@model mcbaMVC.ViewModels.ConfirmVM
+@using mcbaMVC.Models
+@* we can now write TxnType.Deposit etc. *@
+
+@{
+    ViewData["Title"] = "Confirm " + Model.Type.ToString();
+}
+
+<div class="card">
+  <div class="card-body">
+    @if (Model.Type == TxnType.Deposit)
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Account</dt>
+            <dd class="col-sm-9">#@Model.AccountNumber (@Model.AccountTypeLabel)</dd>
+            <dt class="col-sm-3">Current balance</dt>
+            <dd class="col-sm-9">@Model.CurrentBalance?.ToString("C")</dd>
+            <dt class="col-sm-3">Available balance</dt>
+            <dd class="col-sm-9">@Model.AvailableBalance?.ToString("C")</dd>
+            <dt class="col-sm-3">Amount</dt>
+            <dd class="col-sm-9">@Model.Amount.ToString("C")</dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Comment))
+            {
+                <dt class="col-sm-3">Comment</dt>
+                <dd class="col-sm-9">@Model.Comment</dd>
+            }
+        </dl>
+    }
+    else if (Model.Type == TxnType.Withdraw)
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Account</dt>
+            <dd class="col-sm-9">#@Model.AccountNumber (@Model.AccountTypeLabel)</dd>
+            <dt class="col-sm-3">Current balance</dt>
+            <dd class="col-sm-9">@Model.CurrentBalance?.ToString("C")</dd>
+            <dt class="col-sm-3">Available balance</dt>
+            <dd class="col-sm-9">@Model.AvailableBalance?.ToString("C")</dd>
+            <dt class="col-sm-3">Amount</dt>
+            <dd class="col-sm-9">@Model.Amount.ToString("C")</dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Comment))
+            {
+                <dt class="col-sm-3">Comment</dt>
+                <dd class="col-sm-9">@Model.Comment</dd>
+            }
+        </dl>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-3">From</dt>
+            <dd class="col-sm-9">#@Model.FromAccountNumber (@Model.FromTypeLabel)</dd>
+            <dt class="col-sm-3">From balance</dt>
+            <dd class="col-sm-9">
+                @Model.FromCurrentBalance?.ToString("C")
+                (Avail: @Model.FromAvailableBalance?.ToString("C"))
+            </dd>
+            <dt class="col-sm-3">To</dt>
+            <dd class="col-sm-9">#@Model.ToAccountNumber (@Model.ToTypeLabel)</dd>
+            <dt class="col-sm-3">Amount</dt>
+            <dd class="col-sm-9">@Model.Amount.ToString("C")</dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Comment))
+            {
+                <dt class="col-sm-3">Comment</dt>
+                <dd class="col-sm-9">@Model.Comment</dd>
+            }
+        </dl>
+    }
+  </div>
+
+  <div class="card-footer bg-white d-flex gap-2">
+    @if (Model.Type == TxnType.Deposit)
+    {
+        <form asp-action="CommitDeposit" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Type)
+            @Html.HiddenFor(m => m.AccountNumber)
+            @Html.HiddenFor(m => m.Amount)
+            @Html.HiddenFor(m => m.Comment)
+            <button class="btn btn-primary">Confirm</button>
+        </form>
+    }
+    else if (Model.Type == TxnType.Withdraw)
+    {
+        <form asp-action="CommitWithdraw" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Type)
+            @Html.HiddenFor(m => m.AccountNumber)
+            @Html.HiddenFor(m => m.Amount)
+            @Html.HiddenFor(m => m.Comment)
+            <button class="btn btn-primary">Confirm</button>
+        </form>
+    }
+    else
+    {
+        <form asp-action="CommitTransfer" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Type)
+            @Html.HiddenFor(m => m.FromAccountNumber)
+            @Html.HiddenFor(m => m.ToAccountNumber)
+            @Html.HiddenFor(m => m.Amount)
+            @Html.HiddenFor(m => m.Comment)
+            <button class="btn btn-primary">Confirm</button>
+        </form>
+    }
+
+    <form asp-action="Cancel" method="post" class="d-inline">
+        @Html.AntiForgeryToken()
+        <button class="btn btn-outline-secondary">Cancel</button>
+    </form>
+  </div>
+</div>

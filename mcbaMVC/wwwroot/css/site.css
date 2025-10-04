@@ -1,13 +1,22 @@
+/* ---------------- Base ---------------- */
 html {
   font-size: 14px;
 }
-
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 60px;
+}
+
+/* focus ring */
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
@@ -15,51 +24,49 @@ html {
 .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
-
-html {
-  position: relative;
-  min-height: 100%;
+.btn:focus,
+.nav-link:focus,
+a:focus {
+  outline: 3px solid rgba(37, 140, 251, 0.5);
+  outline-offset: 2px;
 }
 
+/* prevent horizontal jiggle */
+html,
 body {
-  margin-bottom: 60px;
+  overflow-x: hidden;
 }
 
-.form-floating > .form-control-plaintext::placeholder,
-.form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Navbar tidy */
+.navbar {
+  margin-bottom: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+header + main {
+  margin-top: 0.25rem;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder,
-.form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
-
-/* Full-screen hero */
+/* ---------------- LOGIN hero (blurred bg, card stays sharp) ---------------- */
 .login-hero {
   position: relative;
-  min-height: calc(100vh - 56px); /* full viewport minus navbar */
+  min-height: calc(100vh - 56px);
   width: 100%;
-  overflow: hidden; /* hide blur edges */
-  margin-top: 0;
+  overflow: hidden;
+  margin-top: -1px; /* hides any hairline seam */
 }
-
-/* Background layer (only this is blurred) */
 .login-hero::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("/images/bank.jpg"); /* make sure this path/file exists */
+  background-image: url("/images/bank.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: 50% 12%; /* tweak to show “BANK” nicely */
+  background-position: 50% 12%;
   filter: blur(2px) brightness(0.95);
-  transform: scale(1.06); /* avoids blur-edge halos */
+  transform: scale(1.06);
   z-index: 0;
 }
-
-/* Optional soft veil for contrast */
 .login-hero::after {
   content: "";
   position: absolute;
@@ -67,8 +74,6 @@ body {
   background: rgba(255, 255, 255, 0.18);
   z-index: 0;
 }
-
-/* Keep content/card above the blurred bg */
 .login-hero > * {
   position: relative;
   z-index: 1;
@@ -78,29 +83,71 @@ body {
   z-index: 2;
 }
 
-/* Safety: prevent stray 1–2px horizontal scrollbars */
-html,
-body {
-  overflow-x: hidden;
+/* ---------------- Subnav (sticky under header) ---------------- */
+.subnav {
+  position: sticky;
+  top: 56px; /* MUST match navbar height */
+  z-index: 100;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 0.75rem;
 }
-/* kill any bottom margin on navbar */
-.navbar {
-  margin-bottom: 0 !important;
+.subnav .btn {
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
 }
-/* 1) Kill any spacing the navbar adds */
-.navbar {
-  margin-bottom: 0 !important;
-  border-bottom: 0 !important; /* removes the 1px border line */
-  box-shadow: none !important; /* removes the shadow gap */
-}
-
-/* 2) Make sure the first main section doesn't add padding/margin */
-header + main {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+.subnav .btn + .btn {
+  margin-left: 0.25rem;
 }
 
-/* 3) Belt-and-suspenders: overlap the hero by 1px to hide any subpixel seam */
-.login-hero {
-  margin-top: -1px; /* hides any remaining hairline */
+@media (max-width: 576px) {
+  .subnav .container {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ---------------- Home hero & layout ---------------- */
+.home-hero {
+  background: linear-gradient(120deg, #eef4ff 0%, #f5faff 100%);
+  border: 1px solid #e5eefb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.muted {
+  color: #6c757d;
+}
+
+/* center account cards on wide screens */
+.accounts-wrap {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+/* card tidy */
+.card.clean {
+  border-radius: 12px;
+}
+.card.clean .card-body {
+  padding-bottom: 0.75rem;
+}
+.card.clean .card-footer {
+  background: #fff;
+  border-top: 1px solid #eee;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ---------------- Misc bootstrap helpers ---------------- */
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+  text-align: start;
 }
