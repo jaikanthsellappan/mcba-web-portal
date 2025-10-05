@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using mcbaMVC.ViewModels;
 using mcbaMVC.Data;
+using mcbaMVC.Infrastructure;   // SessionKeys
 using SimpleHashing.Net;
 
 namespace mcbaMVC.Controllers
@@ -13,7 +15,7 @@ namespace mcbaMVC.Controllers
         public LoginController(MCBAContext context)
         {
             _context = context;
-            _hasher = new SimpleHash(); // uses PBKDF2 with Rfc2898DeriveBytes under the hood
+            _hasher  = new SimpleHash(); // PBKDF2
         }
 
         [HttpGet]
@@ -23,36 +25,31 @@ namespace mcbaMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Index(LoginViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            // ✅ Find login from DB
-            var login = _context.Logins.FirstOrDefault(l => l.LoginID == model.LoginId);
+            var login = _context.Logins
+                                .Include(l => l.Customer)
+                                .FirstOrDefault(l => l.LoginID == model.LoginId);
 
-            if (login == null)
+            if (login is null || !_hasher.Verify(model.Password, login.PasswordHash))
             {
                 TempData["LoginError"] = "Invalid login credentials";
                 return View(model);
             }
 
-            // ✅ Verify password with PBKDF2 hash
-            bool isValid = _hasher.Verify(model.Password, login.PasswordHash);
-
-            if (!isValid)
-            {
-                TempData["LoginError"] = "Invalid login credentials";
-                return View(model);
-            }
-
-            // ✅ If valid, store session data
-            HttpContext.Session.SetString("LoginID", login.LoginID);
-            HttpContext.Session.SetInt32("CustomerID", login.CustomerID);
+            HttpContext.Session.SetInt32(SessionKeys.LoggedInCustomerId, login.CustomerID);
+            HttpContext.Session.SetString(SessionKeys.LoggedInLoginId,   login.LoginID);
+            HttpContext.Session.SetString(SessionKeys.LoggedInName,      login.Customer?.Name ?? "Customer");
 
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

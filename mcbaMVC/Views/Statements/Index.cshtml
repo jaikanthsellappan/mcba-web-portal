@@ -1,0 +1,71 @@
+@model mcbaMVC.Models.StatementsVM
+@{
+    ViewData["Title"] = "My Statements";
+    string D(DateTime dt) => dt.ToString("dd/MM/yyyy");
+    string Tm(DateTime dt) => dt.ToString("hh:mm tt"); // <hour>:<minute> <AM/PM>
+}
+
+<h2 class="mb-2">My Statements</h2>
+
+<div class="mb-3">
+  <div><strong>Account:</strong> @Model.AccountNumber (@Model.AccountType)</div>
+  <div><strong>Current balance:</strong> @Model.CurrentBalance.ToString("C")</div>
+  <div><strong>Available balance:</strong> @Model.AvailableBalance.ToString("C")</div>
+</div>
+
+@if (!Model.Transactions.Any())
+{
+  <div class="alert alert-info">No transactions to display.</div>
+}
+else
+{
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Account</th>
+          <th>Destination</th>
+          <th class="text-end">Amount</th>
+          <th>Date (Local)</th>
+          <th>Time (Local)</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var t in Model.Transactions)
+        {
+          <tr>
+            <td>@t.TransactionID</td>
+            <td>@t.TransactionType</td>
+            <td>@t.AccountNumber</td>
+            <td>@(t.DestinationAccountNumber?.ToString() ?? "—")</td>
+            <td class="text-end">@t.Amount.ToString("C")</td>
+            <td>@D(t.TransactionTimeLocal)</td>
+            <td>@Tm(t.TransactionTimeLocal)</td>
+            <td>@(string.IsNullOrWhiteSpace(t.Comment) ? "—" : t.Comment)</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="d-flex justify-content-between align-items-center mt-2">
+    <div>Page <strong>@Model.Page</strong> of <strong>@Model.TotalPages</strong></div>
+    <div class="btn-group">
+      <a class="btn btn-outline-secondary btn-sm @(Model.Page == 1 ? "disabled" : null)"
+         asp-action="Index" asp-route-accountNumber="@Model.AccountNumber" asp-route-page="@(Model.Page - 1)">Previous</a>
+      <a class="btn btn-outline-secondary btn-sm @(Model.Page == Model.TotalPages ? "disabled" : null)"
+         asp-action="Index" asp-route-accountNumber="@Model.AccountNumber" asp-route-page="@(Model.Page + 1)">Next</a>
+    </div>
+  </nav>
+}
+
+<hr class="my-3" />
+<div class="d-flex gap-2">
+  <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Index">Back to Accounts</a>
+  <a class="btn btn-outline-dark" asp-action="Print" asp-route-accountNumber="@Model.AccountNumber" target="_blank">
+    Print Transaction History
+  </a>
+</div>

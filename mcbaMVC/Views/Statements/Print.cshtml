@@ -1,0 +1,63 @@
+@model mcbaMVC.Models.StatementsVM
+@{
+    Layout = null;
+    var title = (string?)ViewData["DocTitle"] ?? $"TransactionHistory_Account_{Model.AccountNumber}";
+}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>@title</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+    h1 { margin: 0 0 8px 0; font-size: 20px; }
+    .meta { margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; font-size: 12px; }
+    thead { background: #f5f5f5; }
+    .right { text-align: right; }
+    .noprint { text-align: right; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="noprint">
+    <button onclick="window.print()">Print</button>
+  </div>
+
+  <h1>Transaction History — Account @Model.AccountNumber (@Model.AccountType)</h1>
+  <div class="meta">
+    Current: <strong>@Model.CurrentBalance.ToString("C")</strong> |
+    Available: <strong>@Model.AvailableBalance.ToString("C")</strong>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Account</th>
+        <th>Destination</th>
+        <th class="right">Amount</th>
+        <th>Date (Local)</th>
+        <th>Time (Local)</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var t in Model.Transactions)
+      {
+        <tr>
+          <td>@t.TransactionID</td>
+          <td>@t.TransactionType</td>
+          <td>@t.AccountNumber</td>
+          <td>@(t.DestinationAccountNumber?.ToString() ?? "—")</td>
+          <td class="right">@t.Amount.ToString("C")</td>
+          <td>@t.TransactionTimeLocal.ToString("dd/MM/yyyy")</td>
+          <td>@t.TransactionTimeLocal.ToString("hh:mm tt")</td>
+          <td>@(string.IsNullOrWhiteSpace(t.Comment) ? "—" : t.Comment)</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</body>
+</html>
