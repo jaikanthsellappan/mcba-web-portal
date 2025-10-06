@@ -1,6 +1,6 @@
 ﻿using mcbaMVC.Data;
 using mcbaMVC.Models;
-using mcbaMVC.Infrastructure;   // <-- SessionKeys
+using mcbaMVC.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -21,7 +21,9 @@ namespace mcbaMVC.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Index()
         {
-            var customerId = HttpContext.Session.GetInt32(SessionKeys.LoggedInCustomerId);
+            var customerId = HttpContext.Session.GetInt32(SessionKeys.LoggedInCustomerId)
+                           ?? HttpContext.Session.GetInt32("CustomerID");
+
             if (customerId is null)
                 return RedirectToAction("Index", "Login");
 
@@ -37,7 +39,7 @@ namespace mcbaMVC.Controllers
             }
 
             ViewBag.CustomerName = customer.Name;
-            ViewBag.Accounts = customer.CustomerAccounts; // your Index.cshtml handles IEnumerable<Account>
+            ViewBag.Accounts = customer.CustomerAccounts;
 
             return View();
         }
@@ -50,6 +52,8 @@ namespace mcbaMVC.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

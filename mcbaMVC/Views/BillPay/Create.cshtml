@@ -1,0 +1,59 @@
+@model mcbaMVC.Models.BillPay
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Schedule Payment";
+    var accounts = (IEnumerable<mcbaMVC.Models.Account>)ViewBag.Accounts;
+    var payees   = (IEnumerable<mcbaMVC.Models.Payee>)ViewBag.Payees;
+}
+<h2 class="mb-3">Schedule a Payment</h2>
+
+<!-- Show model-level errors -->
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create" method="post" class="row g-3">
+  <div class="col-md-4">
+    <label class="form-label">From Account</label>
+    <select asp-for="AccountNumber" class="form-select"
+            asp-items="@(new SelectList(accounts, "AccountNumber", "AccountNumber"))">
+      <option value="">-- Select an account --</option>
+    </select>
+    <span class="text-danger" asp-validation-for="AccountNumber"></span>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Payee</label>
+    <select asp-for="PayeeID" class="form-select"
+            asp-items="@(new SelectList(payees, "PayeeID", "Name"))">
+      <option value="">-- Select a payee --</option>
+    </select>
+    <span class="text-danger" asp-validation-for="PayeeID"></span>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Amount</label>
+    <input asp-for="Amount" class="form-control" />
+    <span class="text-danger" asp-validation-for="Amount"></span>
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Schedule (Local)</label>
+    <input type="datetime-local" name="scheduleLocal" class="form-control" required />
+    <span class="text-danger" asp-validation-for="ScheduleTimeUtc"></span>
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Period</label>
+    <select asp-for="Period" class="form-select">
+      <option value="O">Once</option>
+      <option value="M">Monthly</option>
+    </select>
+    <span class="text-danger" asp-validation-for="Period"></span>
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-primary">Schedule</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+  </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
