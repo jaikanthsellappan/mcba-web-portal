@@ -1,0 +1,77 @@
+﻿@model mcbaMVC.Models.Customer
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    <h4 class="my-2 fw-semibold">My Profile</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    @* --- Success Alerts --- *@
+                    @if (TempData["ProfileUpdated"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-1"></i> @TempData["ProfileUpdated"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["PasswordChanged"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-shield-lock me-1"></i> @TempData["PasswordChanged"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted fw-semibold">Name</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">TFN</dt>
+                        <dd class="col-sm-8">@(@Model.TFN ?? "—")</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">Address</dt>
+                        <dd class="col-sm-8">@(@Model.Address ?? "—")</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">City</dt>
+                        <dd class="col-sm-8">@(@Model.City ?? "—")</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">State</dt>
+                        <dd class="col-sm-8">@(@Model.State ?? "—")</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">Postcode</dt>
+                        <dd class="col-sm-8">@(@Model.Postcode ?? "—")</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">Mobile</dt>
+                        <dd class="col-sm-8">@(@Model.Mobile ?? "—")</dd>
+                    </dl>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex flex-wrap justify-content-between gap-2">
+                        <a asp-action="Edit" class="btn btn-success flex-fill">
+                            <i class="bi bi-pencil-square"></i> Edit Details
+                        </a>
+                        <a asp-action="ChangePassword" class="btn btn-outline-primary flex-fill">
+                            <i class="bi bi-shield-lock"></i> Change Password
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary flex-fill">
+                            <i class="bi bi-x-circle"></i> Close
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
