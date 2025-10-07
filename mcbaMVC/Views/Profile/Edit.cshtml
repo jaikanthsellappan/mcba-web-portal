@@ -1,0 +1,85 @@
+﻿@model mcbaMVC.Models.Customer
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    <h4 class="my-2 fw-semibold">Edit Profile</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="CustomerID" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Name" class="form-control" placeholder="Full Name" />
+                            <label asp-for="Name"></label>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="TFN" class="form-control" placeholder="123 456 789" />
+                            <label asp-for="TFN"></label>
+                            <span asp-validation-for="TFN" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Address" class="form-control" placeholder="Address" />
+                            <label asp-for="Address"></label>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="City" class="form-control" placeholder="City" />
+                            <label asp-for="City"></label>
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="State" class="form-control" placeholder="State" />
+                                    <label asp-for="State"></label>
+                                    <span asp-validation-for="State" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Postcode" class="form-control" placeholder="Postcode" />
+                                    <label asp-for="Postcode"></label>
+                                    <span asp-validation-for="Postcode" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Mobile" class="form-control" placeholder="04XX XXX XXX" />
+                            <label asp-for="Mobile"></label>
+                            <span asp-validation-for="Mobile" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-x-circle"></i> Close
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
