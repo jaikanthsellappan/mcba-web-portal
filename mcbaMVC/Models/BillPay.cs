@@ -3,13 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mcbaMVC.Models
 {
-    /// <summary>
     /// Represents a scheduled payment from a customer account to a registered payee.
-    /// </summary>
     public class BillPay
     {
-        [Key]
-        public int BillPayID { get; set; }
+        [Key] public int BillPayID { get; set; }
 
         [Required(ErrorMessage = "Bill must be tied to an account.")]
         public int AccountNumber { get; set; }
@@ -21,16 +18,31 @@ namespace mcbaMVC.Models
         [Column(TypeName = "money")]
         public decimal Amount { get; set; }
 
+        // Store UTC; UI displays local
         [Required(ErrorMessage = "Schedule time must be provided.")]
         public DateTime ScheduleTimeUtc { get; set; }
 
+        // Your existing period format: 'O' (once) or 'M' (monthly)
         [Required]
         [RegularExpression(@"^[OM]$", ErrorMessage = "Period must be 'O' (One-off) or 'M' (Monthly).")]
         [StringLength(1)]
-        public string Period { get; set; } = string.Empty;
+        public string Period { get; set; } = "O";
+
+        // NEW: lifecycle status (Scheduled/Processing/Paid/Failed/Cancelled)
+        // Using 1-letter codes to match your current pattern.
+        [Required]
+        [RegularExpression(@"^[SPFCD]$", ErrorMessage = "Status must be S, P, F, C or D.")]
+        [StringLength(1)]
+        public string Status { get; set; } = "S"; // S=Scheduled, P=Processing, F=Failed, C=Cancelled, D=Paid (Done)
+
+        // NEW: diagnostics for UI
+        public DateTime? LastAttemptUtc { get; set; }
+
+        [StringLength(300)]
+        public string? LastError { get; set; }
 
         [ForeignKey(nameof(AccountNumber))]
         public Account Account { get; set; } = null!;
-        public Payee Payee { get; set; } = null!;
+        public Payee  Payee   { get; set; } = null!;
     }
 }

@@ -4,6 +4,7 @@ namespace mcbaMVC.ViewModels
     {
         Deposit,
         Withdraw,
-        Transfer
+        Transfer,
+        BillPay
     }
 }
