@@ -1,14 +1,13 @@
-﻿@* Views/Home/Index.cshtml *@
+﻿@* Views/Home/Index.cshtml (updated modern layout) *@
 @using System.Collections;
 @using System.Globalization;
 
 @{
     ViewData["Title"] = "Home";
 
-    // Read whatever the controller provides without breaking the page
     var model = ViewData.Model;
-
     string customerName = "Customer";
+
     if (model != null)
     {
         var mt = model.GetType();
@@ -25,15 +24,15 @@
             if (custObj != null)
             {
                 var nameProp = custObj.GetType().GetProperty("Name");
-                var nameVal  = nameProp?.GetValue(custObj) as string;
+                var nameVal = nameProp?.GetValue(custObj) as string;
                 if (!string.IsNullOrWhiteSpace(nameVal)) customerName = nameVal!;
             }
         }
     }
+
     if (ViewBag.CustomerName is string vbName && !string.IsNullOrWhiteSpace(vbName))
         customerName = vbName;
 
-    // Accounts: accept Model.Accounts (any IEnumerable) or ViewBag.Accounts
     IEnumerable? accountsObj = null;
     if (model != null)
     {
@@ -45,19 +44,18 @@
         accountsObj = vbAcc;
 
     string Money(object? amount) =>
-        amount is IFormattable f
-            ? f.ToString("C", CultureInfo.CurrentCulture)
-            : (amount?.ToString() ?? "-");
+        amount is IFormattable f ? f.ToString("C", CultureInfo.CurrentCulture)
+                                 : (amount?.ToString() ?? "-");
 }
 
 <section class="home-hero">
-  <h2 class="mb-1">Welcome, @customerName</h2>
-  <div class="muted">Your accounts and quick actions are below.</div>
+    <h2 class="mb-1">Welcome, @customerName</h2>
+    <div class="muted">Your accounts and quick actions are below.</div>
 </section>
 
 @if (accountsObj is null)
 {
-    <div class="alert alert-info">
+    <div class="alert alert-info mt-3">
         Your dashboard is ready. Once the controller supplies an <code>Accounts</code> list,
         your balances will appear here.
     </div>
@@ -65,73 +63,52 @@
 else
 {
     <div class="accounts-wrap">
-        <div class="row row-cols-1 row-cols-md-2 g-3">
         @foreach (var a in accountsObj)
         {
             var t = a!.GetType();
-            var accNum     = t.GetProperty("AccountNumber")?.GetValue(a);
+            var accNum = t.GetProperty("AccountNumber")?.GetValue(a);
             var typeRawStr = t.GetProperty("AccountType")?.GetValue(a)?.ToString() ?? "";
-            var currentVal = 0m;
-            var available  = 0m;
+            var currentVal = Convert.ToDecimal(t.GetProperty("Balance")?.GetValue(a) ?? 0m);
 
-            // Prefer VM fields Current/Available if provided
-            var propCurrent = t.GetProperty("Current");
-            var propAvail   = t.GetProperty("Available");
-            if (propCurrent != null)
-                currentVal = Convert.ToDecimal(propCurrent.GetValue(a) ?? 0m);
-            else
-                currentVal = Convert.ToDecimal(t.GetProperty("Balance")?.GetValue(a) ?? 0m);
+            var isChecking = string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase);
+            var typeLabel = isChecking ? "Checking" :
+                            string.Equals(typeRawStr, "S", StringComparison.OrdinalIgnoreCase) ? "Savings" :
+                            (string.IsNullOrWhiteSpace(typeRawStr) ? "—" : typeRawStr);
 
-            if (propAvail != null)
-                available = Convert.ToDecimal(propAvail.GetValue(a) ?? 0m);
-            else
-            {
-                // If Checking, include overdraft headroom for "available"
-                var isChecking =
-                    string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ||
-                    typeRawStr.StartsWith("Check", StringComparison.OrdinalIgnoreCase);
-                available = isChecking ? Math.Max(0m, currentVal + 500m) : currentVal;
-            }
+            var available = isChecking ? Math.Max(0m, currentVal + 500m) : currentVal;
 
-            var typeLabel =
-                string.Equals(typeRawStr, "C", StringComparison.OrdinalIgnoreCase) ? "Checking" :
-                string.Equals(typeRawStr, "S", StringComparison.OrdinalIgnoreCase) ? "Savings"  :
-                (string.IsNullOrWhiteSpace(typeRawStr) ? "—" : typeRawStr);
+            var cardClass = isChecking ? "account-card checking" : "account-card savings";
+            var badgeClass = isChecking ? "badge-checking" : "badge-savings";
 
-            <div class="col">
-              <div class="card clean h-100 shadow-sm">
+            <div class="@cardClass">
                 <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="card-title mb-2">Account #@accNum</h5>
-                    <!-- plain Bootstrap badge (no custom colours) -->
-                    <span class="badge text-bg-light border">@typeLabel</span>
-                  </div>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title mb-2">Account #@accNum</h5>
+                        <span class="badge @badgeClass">@typeLabel</span>
+                    </div>
 
-                  <p class="mb-1"><strong>Current balance:</strong> @Money(currentVal)</p>
-                  <p class="mb-0"><strong>Available balance:</strong> @Money(available)</p>
+                    <p class="mb-1"><strong>Current balance:</strong> @Money(currentVal)</p>
+                    <p class="mb-0"><strong>Available balance:</strong> @Money(available)</p>
                 </div>
 
-                <!-- Per-account quick actions -->
                 <div class="card-footer bg-white">
-                  <a class="btn btn-sm btn-outline-primary"
-                     asp-controller="Statements" asp-action="Index"
-                     asp-route-accountNumber="@accNum">View statements</a>
+                    <a class="btn btn-sm btn-primary"
+                       asp-controller="Statements" asp-action="Index"
+                       asp-route-accountNumber="@accNum">View statements</a>
 
-                  <a class="btn btn-sm btn-outline-secondary"
-                     asp-controller="Transactions" asp-action="Deposit"
-                     asp-route-accountNumber="@accNum">Deposit</a>
+                    <a class="btn btn-sm btn-primary"
+                       asp-controller="Transactions" asp-action="Deposit"
+                       asp-route-accountNumber="@accNum">Deposit</a>
 
-                  <a class="btn btn-sm btn-outline-secondary"
-                     asp-controller="Transactions" asp-action="Withdraw"
-                     asp-route-accountNumber="@accNum">Withdraw</a>
+                    <a class="btn btn-sm btn-primary"
+                       asp-controller="Transactions" asp-action="Withdraw"
+                       asp-route-accountNumber="@accNum">Withdraw</a>
 
-                  <a class="btn btn-sm btn-outline-secondary"
-                     asp-controller="Transactions" asp-action="Transfer"
-                     asp-route-fromAccountNumber="@accNum">Transfer</a>
+                    <a class="btn btn-sm btn-primary"
+                       asp-controller="Transactions" asp-action="Transfer"
+                       asp-route-fromAccountNumber="@accNum">Transfer</a>
                 </div>
-              </div>
             </div>
         }
-        </div>
     </div>
 }

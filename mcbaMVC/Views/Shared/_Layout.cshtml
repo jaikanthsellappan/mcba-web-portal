@@ -6,91 +6,98 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - mcba</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/mcbaMVC.styles.css" asp-append-version="true" />
 </head>
 <body>
 @{
-    // Consider both keys so older code keeps working.
     var cid = Context.Session.GetInt32(SessionKeys.LoggedInCustomerId)
            ?? Context.Session.GetInt32("CustomerID");
     bool isLoggedIn = cid != null;
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    bool isLoginPage = string.Equals(currentController, "Login", StringComparison.OrdinalIgnoreCase);
 }
-<header>
-    <!-- Top navbar -->
-    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom py-1">
-        <div class="container-fluid">
-            <a class="navbar-brand small" asp-controller="Home" asp-action="Index">mcbaMVC</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+@if (!isLoginPage)
+{
+    <!-- ====== HEADER + NAVBAR ====== -->
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom py-1">
+            <div class="container-fluid">
+                <a class="navbar-brand small" asp-controller="Home" asp-action="Index">MCBA</a>
 
-            <div id="mainNav" class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link py-1" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link py-1" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <!-- Right side -->
-                <ul class="navbar-nav ms-auto align-items-center">
-                    @if (isLoggedIn)
-                    {
-                        <li class="nav-item d-none d-sm-block">
-                            <a class="nav-link" asp-controller="Profile" asp-action="Index">My Profile</a>
-                        </li>
+                <div id="mainNav" class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
-                            </form>
+                            <a class="nav-link py-1" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
+                        
+                    </ul>
 
-    <!-- Quick actions (only when logged in) -->
-    @if (isLoggedIn)
-    {
-        <div class="subnav border-bottom bg-light">
-            <div class="container py-2">
-                <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Deposit">Deposit</a>
-                    <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Withdraw">Withdraw</a>
-                    <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Transfer">Transfer</a>
-                    <a class="btn btn-outline-primary btn-sm" asp-controller="BillPay" asp-action="Index">BillPay</a>
-                    <a class="btn btn-outline-secondary btn-sm" asp-controller="Statements" asp-action="Index">My Statements</a>
-                    <a class="btn btn-outline-secondary btn-sm d-sm-none" asp-controller="Profile" asp-action="Index">My Profile</a>
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item d-none d-sm-block">
+                                <a class="nav-link" asp-controller="Profile" asp-action="Index">My Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
-        </div>
-    }
-</header>
+        </nav>
 
+        @if (isLoggedIn)
+        {
+            <div class="subnav border-bottom bg-light">
+                <div class="container py-2">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Deposit">Deposit</a>
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Withdraw">Withdraw</a>
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="Transactions" asp-action="Transfer">Transfer</a>
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="BillPay" asp-action="Index">BillPay</a>
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="Statements" asp-action="Index">My Statements</a>
+                        <a class="btn btn-outline-secondary btn-sm d-sm-none" asp-controller="Profile" asp-action="Index">My Profile</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </header>
+}
+
+<!-- ====== MAIN BODY ====== -->
 <main role="main" class="pb-3">
     @RenderBody()
 </main>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2025 - mcbaMVC - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
+@if (!isLoginPage)
+{
+    <!-- ====== FOOTER ====== -->
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - mcbaMVC -
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+}
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
