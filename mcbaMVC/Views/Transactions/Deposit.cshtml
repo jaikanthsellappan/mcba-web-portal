@@ -2,29 +2,38 @@
 @{
     ViewData["Title"] = "Deposit";
 }
-<h3>Deposit</h3>
-<hr />
-<form asp-action="Deposit" method="post">
-    @Html.AntiForgeryToken()
-    <div class="mb-3">
-        <label asp-for="AccountNumber" class="form-label"></label>
-        <select asp-for="AccountNumber" class="form-select" asp-items="ViewBag.Accounts">
-            <option value="">-- choose an account --</option>
-        </select>
-        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+
+<div class="transaction-page">
+    <div class="transaction-card">
+        <h3>Deposit</h3>
+        <hr />
+        <form asp-action="Deposit" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="AccountNumber" class="form-label"></label>
+                <select asp-for="AccountNumber" class="form-select" asp-items="ViewBag.Accounts">
+                    <option value="">-- choose an account --</option>
+                </select>
+                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Amount" class="form-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Comment" class="form-label"></label>
+                <textarea asp-for="Comment" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+
+            <button class="btn btn-primary w-100">Review</button>
+        </form>
     </div>
-    <div class="mb-3">
-        <label asp-for="Amount" class="form-label"></label>
-        <input asp-for="Amount" class="form-control" />
-        <span asp-validation-for="Amount" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Comment" class="form-label"></label>
-        <textarea asp-for="Comment" class="form-control" rows="2"></textarea>
-        <span asp-validation-for="Comment" class="text-danger"></span>
-    </div>
-    <button class="btn btn-primary">Review</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
