@@ -18,6 +18,7 @@
                     </select>
                     <span asp-validation-for="FromAccountNumber" class="text-danger"></span>
                 </div>
+
                 <div class="col-md-6">
                     <label asp-for="ToAccountNumber" class="form-label"></label>
                     <input asp-for="ToAccountNumber" class="form-control" placeholder="Destination account number" />
@@ -37,11 +38,29 @@
                 <span asp-validation-for="Comment" class="text-danger"></span>
             </div>
 
-            <button class="btn btn-primary w-100">Review</button>
+            <button class="btn btn-primary w-100 mb-3">Review</button>
+            <button type="button" class="btn btn-outline-secondary w-100" onclick="goBack()">Back</button>
         </form>
     </div>
 </div>
 
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const selectedFrom = '@ViewBag.SelectedFrom';
+        if (selectedFrom) {
+            const ddl = document.querySelector('select[name="FromAccountNumber"]');
+            if (ddl) ddl.value = selectedFrom;
+        }
+
+        function goBack() {
+            if (document.referrer && document.referrer.includes('/Home')) {
+                window.history.back();
+            } else {
+                window.location.href = '/Home/Index';
+            }
+        }
+    </script>
 }

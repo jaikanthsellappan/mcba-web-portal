@@ -30,11 +30,30 @@
                 <span asp-validation-for="Comment" class="text-danger"></span>
             </div>
 
-            <button class="btn btn-primary w-100">Review</button>
+            <button class="btn btn-primary w-100 mb-3">Review</button>
+            <button type="button" class="btn btn-outline-secondary w-100" onclick="goBack()">Back</button>
         </form>
     </div>
 </div>
 
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const selected = '@ViewBag.SelectedAccount';
+        if (selected) {
+            const ddl = document.querySelector('select[name="AccountNumber"]');
+            if (ddl) ddl.value = selected;
+        }
+
+        function goBack() {
+            if (document.referrer && document.referrer.includes('/Home')) {
+                window.history.back();
+            } else {
+                window.location.href = '/Home/Index';
+            }
+        }
+    </script>
 }
+

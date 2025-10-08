@@ -78,15 +78,16 @@ namespace mcbaMVC.Controllers
 
         // =============== Deposit ===============
 
-        [HttpGet]
-        public async Task<IActionResult> Deposit()
-        {
-            var cid = CurrentCustomerId();
-            if (cid is null) return RedirectToAction("Index", "Login");
+        public async Task<IActionResult> Deposit(int? accountNumber)
+{
+    var cid = CurrentCustomerId();
+    if (cid is null) return RedirectToAction("Index", "Login");
 
-            ViewBag.Accounts = BuildAccountSelectList(await GetCustomerAccountsAsync(cid.Value));
-            return View(new DepositVM());
-        }
+    var accounts = await GetCustomerAccountsAsync(cid.Value);
+    ViewBag.Accounts = BuildAccountSelectList(accounts, accountNumber);
+    ViewBag.SelectedAccount = accountNumber;   // store for the view
+    return View(new DepositVM());
+}
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Deposit(DepositVM vm)
@@ -163,14 +164,16 @@ namespace mcbaMVC.Controllers
         // =============== Withdraw ===============
 
         [HttpGet]
-        public async Task<IActionResult> Withdraw()
-        {
-            var cid = CurrentCustomerId();
-            if (cid is null) return RedirectToAction("Index", "Login");
+public async Task<IActionResult> Withdraw(int? accountNumber)
+{
+    var cid = CurrentCustomerId();
+    if (cid is null) return RedirectToAction("Index", "Login");
 
-            ViewBag.Accounts = BuildAccountSelectList(await GetCustomerAccountsAsync(cid.Value));
-            return View(new WithdrawVM());
-        }
+    var accounts = await GetCustomerAccountsAsync(cid.Value);
+    ViewBag.Accounts = BuildAccountSelectList(accounts, accountNumber);
+    ViewBag.SelectedAccount = accountNumber;
+    return View(new WithdrawVM());
+}
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Withdraw(WithdrawVM vm)
@@ -279,16 +282,17 @@ namespace mcbaMVC.Controllers
         }
 
         // =============== Transfer ===============
+[HttpGet]
+public async Task<IActionResult> Transfer(int? fromAccountNumber)
+{
+    var cid = CurrentCustomerId();
+    if (cid is null) return RedirectToAction("Index", "Login");
 
-        [HttpGet]
-        public async Task<IActionResult> Transfer()
-        {
-            var cid = CurrentCustomerId();
-            if (cid is null) return RedirectToAction("Index", "Login");
-
-            ViewBag.FromAccounts = BuildAccountSelectList(await GetCustomerAccountsAsync(cid.Value));
-            return View(new TransferVM());
-        }
+    var accounts = await GetCustomerAccountsAsync(cid.Value);
+    ViewBag.FromAccounts = BuildAccountSelectList(accounts, fromAccountNumber);
+    ViewBag.SelectedFrom = fromAccountNumber;
+    return View(new TransferVM());
+}
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Transfer(TransferVM vm)
