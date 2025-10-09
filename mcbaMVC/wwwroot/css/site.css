@@ -215,3 +215,15 @@ header + main {
 .transaction-card hr {
   margin: 0.75rem 0 1.5rem 0;
 }
+/* --- My Profile button styling (matches Logout hover) --- */
+.profile-btn {
+  color: #0d6efd; /* Bootstrap primary color */
+  border-color: #0d6efd;
+  transition: all 0.2s ease-in-out;
+}
+
+.profile-btn:hover {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}

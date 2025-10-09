@@ -43,22 +43,23 @@
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label"></label>
-                        <div class="input-group input-group-lg position-relative">
-                            <input asp-for="Password"
-                                   id="Password"
-                                   type="password"
-                                   class="form-control"
-                                   placeholder="Your password" />
-                            <button type="button"
-                                    id="togglePwd"
-                                    class="btn btn-outline-secondary"
-                                    tabindex="-1"
-                                    aria-label="Show password">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
+                    <div class="input-group input-group-lg">
+                        <input asp-for="Password"
+                        id="Password"
+                        type="password"
+                        class="form-control border-end-0"
+                        placeholder="Your password" />
+                    <button type="button"
+                        id="togglePwd"
+                        class="btn btn-light border-start-0"
+                        tabindex="-1"
+                        aria-label="Show password">
+            <i class="bi bi-eye"></i>
+        </button>
+    </div>
+    <span asp-validation-for="Password" class="text-danger"></span>
+</div>
+
 
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Sign in</button>
 

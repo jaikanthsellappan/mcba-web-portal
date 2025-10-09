@@ -44,8 +44,8 @@
                     <ul class="navbar-nav ms-auto align-items-center">
                         @if (isLoggedIn)
                         {
-                            <li class="nav-item d-none d-sm-block">
-                                <a class="nav-link" asp-controller="Profile" asp-action="Index">My Profile</a>
+                            <li class="nav-item d-none d-sm-block me-2">
+                                <a class="btn btn-sm btn-outline-primary profile-btn" asp-controller="Profile" asp-action="Index">My Profile</a>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Home" asp-action="Logout" method="post" class="d-inline">
