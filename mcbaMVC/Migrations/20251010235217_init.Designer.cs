@@ -12,7 +12,7 @@ using mcbaMVC.Data;
 namespace mcbaMVC.Migrations
 {
     [DbContext(typeof(MCBAContext))]
-    [Migration("20251007043345_init")]
+    [Migration("20251010235217_init")]
     partial class init
     {
         /// <inheritdoc />

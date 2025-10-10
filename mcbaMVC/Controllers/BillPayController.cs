@@ -63,6 +63,8 @@ namespace mcbaMVC.Controllers
             var payeeExists = await _db.Payees.AnyAsync(p => p.PayeeID == input.PayeeID);
             if (!payeeExists)
                 ModelState.AddModelError(nameof(BillPay.PayeeID), "Please choose a valid payee.");
+            else
+                input.Payee = await _db.Payees.FindAsync(input.PayeeID);
 
             // 3) amount
             if (input.Amount <= 0)

@@ -42,7 +42,7 @@ namespace mcbaMVC.Models
         public string? LastError { get; set; }
 
         [ForeignKey(nameof(AccountNumber))]
-        public Account Account { get; set; } = null!;
-        public Payee  Payee   { get; set; } = null!;
+        public Account? Account { get; set; }
+        public Payee?  Payee   { get; set; }
     }
 }
