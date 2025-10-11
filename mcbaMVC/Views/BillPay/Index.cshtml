@@ -1,5 +1,6 @@
 @model IEnumerable<mcbaMVC.Models.BillPay>
 @using System.Globalization
+
 @{
     ViewData["Title"] = "BillPay";
 
@@ -15,52 +16,79 @@
         "C" => "Cancelled",
         _   => s ?? "—"
     };
-}
-<h2 class="mb-3">Scheduled Payments</h2>
 
-@if (TempData["Toast"] is string toast)
-{
-    <div class="alert alert-success">@toast</div>
+    bool any = Model != null && Model.Any();
 }
 
-<p><a class="btn btn-outline-primary" asp-action="Create">Schedule New Payment</a></p>
+<div class="transaction-page">
+  <div class="transaction-card" style="max-width: 1100px;">
 
-@if (!Model.Any())
-{
-    <div class="text-muted">No scheduled payments yet.</div>
-}
-else
-{
-<table class="table table-sm align-middle">
-  <thead class="table-light">
-    <tr>
-      <th>Account</th><th>Payee</th><th class="text-end">Amount</th>
-      <th>Date</th><th>Time</th><th>Period</th><th>Status</th><th>Error</th><th></th>
-    </tr>
-  </thead>
-  <tbody>
-  @foreach (var b in Model)
-  {
-    <tr>
-      <td>@b.AccountNumber</td>
-      <td>@b.Payee?.Name</td>
-      <td class="text-end">@b.Amount.ToString("C")</td>
-      <td>@D(b.ScheduleTimeUtc)</td>
-      <td>@T(b.ScheduleTimeUtc)</td>
-      <td>@PeriodText(b.Period)</td>
-      <td>@StatusText(b.Status)</td>
-      <td>@(string.IsNullOrWhiteSpace(b.LastError) ? "—" : b.LastError)</td>
-      <td>
-        @if (b.Status == "S")
+    <h3>Scheduled Payments</h3>
+    <hr />
+
+    @if (TempData["Toast"] is string toast)
+    {
+        <div class="alert alert-success mb-3">@toast</div>
+    }
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-primary" asp-action="Create">Schedule New Payment</a>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Back to Accounts</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Account</th>
+            <th>Payee</th>
+            <th class="text-end">Amount</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Period</th>
+            <th>Status</th>
+            <th>Error</th>
+            <th style="width:1%"></th>
+          </tr>
+        </thead>
+        <tbody>
+        @if (!any)
         {
-          <form method="post" asp-action="Cancel">
-            <input type="hidden" name="id" value="@b.BillPayID" />
-            <button class="btn btn-sm btn-outline-danger">Cancel</button>
-          </form>
+            <tr>
+              <td colspan="9" class="text-center text-muted py-4">
+                No scheduled payments yet.
+              </td>
+            </tr>
         }
-      </td>
-    </tr>
-  }
-  </tbody>
-</table>
-}
+        else
+        {
+            foreach (var b in Model)
+            {
+                <tr>
+                  <td>@b.AccountNumber</td>
+                  <td>@b.Payee?.Name</td>
+                  <td class="text-end">@b.Amount.ToString("C")</td>
+                  <td>@D(b.ScheduleTimeUtc)</td>
+                  <td>@T(b.ScheduleTimeUtc)</td>
+                  <td>@PeriodText(b.Period)</td>
+                  <td>@StatusText(b.Status)</td>
+                  <td>@(string.IsNullOrWhiteSpace(b.LastError) ? "—" : b.LastError)</td>
+                  <td class="text-end">
+                    @if (b.Status == "S")
+                    {
+                      <form method="post" asp-action="Cancel" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@b.BillPayID" />
+                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                      </form>
+                    }
+                  </td>
+                </tr>
+            }
+        }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
