@@ -112,9 +112,11 @@
                     @Html.HiddenFor(m => m.FromAccountNumber)
                     @Html.HiddenFor(m => m.ToAccountNumber)
                     @Html.HiddenFor(m => m.Amount)
+                    @Html.HiddenFor(m => m.Fee)
                     @Html.HiddenFor(m => m.Comment)
-                    <button class="btn btn-primary px-4">Confirm</button>
+                <button class="btn btn-primary px-4">Confirm</button>
                 </form>
+
             }
 
             <form asp-action="Cancel" method="post" class="d-inline">
