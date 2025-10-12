@@ -396,8 +396,7 @@ public async Task<IActionResult> Transfer(int? fromAccountNumber)
                     AccountNumber              = to.AccountNumber,
                     TransactionType            = "T",
                     Amount                     = c.Amount,
-                    Comment                    = $"Transfer from #{from.AccountNumber}" +
-                                                 (string.IsNullOrWhiteSpace(c.Comment) ? "" : $" - {c.Comment}"),
+                    Comment                    = c.Comment,
                     DestinationAccountNumber   = from.AccountNumber,
                     TransactionTimeUtc         = DateTime.UtcNow
                 });
