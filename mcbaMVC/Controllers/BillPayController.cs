@@ -37,6 +37,7 @@ namespace mcbaMVC.Controllers
             if (cid is null) return RedirectToAction("Index", "Login");
 
             await LoadDropdownsAsync(cid.Value);
+
             return View(new BillPay
             {
                 AccountNumber = fromAccountNumber ?? 0,
@@ -53,33 +54,32 @@ namespace mcbaMVC.Controllers
             var cid = HttpContext.Session.GetInt32(SessionKeys.LoggedInCustomerId);
             if (cid is null) return RedirectToAction("Index", "Login");
 
-            // 1) account must be one of the user's accounts
+            // ---- Validation ----
             var account = await _db.Accounts
                 .FirstOrDefaultAsync(a => a.AccountNumber == input.AccountNumber && a.CustomerID == cid.Value);
             if (account is null)
                 ModelState.AddModelError(nameof(BillPay.AccountNumber), "Please choose one of your accounts.");
 
-            // 2) payee must exist
             var payeeExists = await _db.Payees.AnyAsync(p => p.PayeeID == input.PayeeID);
             if (!payeeExists)
                 ModelState.AddModelError(nameof(BillPay.PayeeID), "Please choose a valid payee.");
-            else
-                input.Payee = await _db.Payees.FindAsync(input.PayeeID);
 
-            // 3) amount
             if (input.Amount <= 0)
                 ModelState.AddModelError(nameof(BillPay.Amount), "Amount must be positive.");
 
-            // 4) period
             if (input.Period != "O" && input.Period != "M")
                 ModelState.AddModelError(nameof(BillPay.Period), "Period must be 'O' (Once) or 'M' (Monthly).");
 
-            // 5) date/time (HTML datetime-local posts as yyyy-MM-ddTHH:mm)
-            if (!DateTime.TryParseExact(scheduleLocal,
-                                        "yyyy-MM-ddTHH:mm",
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.AssumeLocal,
-                                        out var local))
+            DateTime local = DateTime.MinValue; // ✅ default assignment
+            bool parsed = !string.IsNullOrWhiteSpace(scheduleLocal) &&
+                          DateTime.TryParseExact(
+                              scheduleLocal,
+                              "yyyy-MM-ddTHH:mm",
+                              CultureInfo.InvariantCulture,
+                              DateTimeStyles.AssumeLocal,
+                              out local);
+
+            if (!parsed)
             {
                 ModelState.AddModelError(nameof(BillPay.ScheduleTimeUtc), "Invalid date/time.");
             }
@@ -91,11 +91,6 @@ namespace mcbaMVC.Controllers
                 input.ScheduleTimeUtc = local.ToUniversalTime();
             }
 
-            // (Optional) If you want to block scheduling that can't be afforded *right now*:
-            // var isChecking = account?.AccountType?.Equals("C", StringComparison.OrdinalIgnoreCase) == true;
-            // var available = isChecking ? Math.Max(0m, account!.Balance + 500m) : account!.Balance;
-            // if (input.Amount > available) ModelState.AddModelError(nameof(BillPay.Amount), "Insufficient available balance.");
-
             if (!ModelState.IsValid)
             {
                 await LoadDropdownsAsync(cid.Value);
@@ -106,7 +101,10 @@ namespace mcbaMVC.Controllers
             _db.BillPays.Add(input);
             await _db.SaveChangesAsync();
 
-            TempData["Toast"] = "Bill payment scheduled.";
+            // ✅ TempData null-safe for tests
+            if (TempData != null)
+                TempData["Toast"] = "Bill payment scheduled.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -133,6 +131,7 @@ namespace mcbaMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // ---------- Helpers ----------
         private async Task LoadDropdownsAsync(int customerId)
         {
             ViewBag.Accounts = await _db.Accounts
