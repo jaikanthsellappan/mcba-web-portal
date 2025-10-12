@@ -3,9 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mcbaMVC.Models
 {
-    /// <summary>
-    /// Represents a third-party payee to whom a customer can schedule bill payments.
-    /// </summary>
     public class Payee
     {
         [Key]
@@ -15,19 +12,22 @@ namespace mcbaMVC.Models
         [Required, StringLength(50, ErrorMessage = "Payee name cannot exceed 50 characters.")]
         public required string Name { get; set; }
 
-        [Required, StringLength(50, ErrorMessage = "Payee address cannot exceed 50 characters.")]
+        [Required, StringLength(50, ErrorMessage = "Address cannot exceed 50 characters.")]
         public required string Address { get; set; }
 
         [Required, StringLength(40, ErrorMessage = "City name cannot exceed 40 characters.")]
         public required string City { get; set; }
 
-        [Required, StringLength(3, MinimumLength = 2, ErrorMessage = "State should be 2–3 characters (e.g., VIC, NSW).")]
+        [Required, StringLength(3, MinimumLength = 2, ErrorMessage = "State should be 2–3 letters (e.g., VIC, NSW).")]
         public required string State { get; set; }
 
-        [Required, RegularExpression(@"^\d{4}$", ErrorMessage = "Postcode must contain 4 digits only.")]
+        // ✅ Must be exactly 4 digits (Australian postcodes)
+        [Required, RegularExpression(@"^\d{4}$", ErrorMessage = "Postcode must contain exactly 4 digits.")]
         public required string Postcode { get; set; }
 
-        [Required, RegularExpression(@"\(0\d\)\s\d{4}\s\d{4}", ErrorMessage = "Phone must follow format (0X) XXXX XXXX.")]
+        // ✅ Simplified and realistic: allows (03) 9123 4567 OR 03 9123 4567
+        [Required, RegularExpression(@"^(?:\(0\d\)\s?|\d{2}\s?)\d{4}\s?\d{4}$",
+            ErrorMessage = "Phone must follow format 03 9123 4567 or (03) 9123 4567.")]
         public required string Phone { get; set; }
     }
 }

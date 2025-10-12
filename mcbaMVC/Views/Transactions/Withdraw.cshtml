@@ -1,0 +1,76 @@
+@model mcbaMVC.ViewModels.WithdrawVM
+@{
+    ViewData["Title"] = "Withdraw";
+}
+
+<div class="transaction-page">
+    <div class="transaction-card">
+        <h3>Withdraw</h3>
+        <hr />
+        <form asp-action="Withdraw" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="AccountNumber" class="form-label"></label>
+                <select asp-for="AccountNumber" class="form-select" asp-items="ViewBag.Accounts">
+                    <option value="">-- choose an account --</option>
+                </select>
+                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Amount" class="form-label"></label>
+                <input asp-for="Amount" class="form-control" id="Amount" placeholder="Enter amount" value="0.00"
+       onfocus="clearZero(this)" onblur="restoreZero(this)" />
+
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Comment" class="form-label"></label>
+                <textarea asp-for="Comment" class="form-control" rows="2" maxlength="30" placeholder="Enter up to 30 characters"></textarea>
+                <small class="text-muted">Maximum 30 characters allowed.</small>
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+
+            <button class="btn btn-primary w-100 mb-3">Review</button>
+            <button type="button" class="btn btn-outline-secondary w-100" onclick="goBack()">Back</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const selected = '@ViewBag.SelectedAccount';
+        if (selected) {
+            const ddl = document.querySelector('select[name="AccountNumber"]');
+            if (ddl) ddl.value = selected;
+        }
+
+        function goBack() {
+            if (document.referrer && document.referrer.includes('/Home')) {
+                window.history.back();
+            } else {
+                window.location.href = '/Home/Index';
+            }
+        }
+        function clearZero(input) {
+            if (input.value === "0.00" || input.value === "0" || input.value === "0.0") {
+            input.value = "";
+            }
+        }   
+        function restoreZero(input) {
+            if (input.value.trim() === "") {
+            input.value = "0.00";
+            }
+        }
+        // Prevent more than 2 decimals in Amount input
+document.getElementById("Amount").addEventListener("input", function (e) {
+    const val = e.target.value;
+    if (!/^\d*\.?\d{0,2}$/.test(val)) {
+        e.target.value = val.slice(0, -1);
+    }
+});
+    </script>
+}

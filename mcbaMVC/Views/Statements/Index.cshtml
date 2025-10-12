@@ -1,0 +1,116 @@
+@model mcbaMVC.ViewModels.StatementsVM
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "My Statements";
+
+    string Money(decimal v) => v.ToString("C", CultureInfo.CurrentCulture);
+    string D(DateTime dt)   => dt.ToLocalTime().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+    string Tm(DateTime dt)  => dt.ToLocalTime().ToString("hh:mm tt",   CultureInfo.InvariantCulture);
+
+    var hasRows = Model.Transactions != null && Model.Transactions.Any();
+}
+
+<div class="transaction-page">
+  <div class="transaction-card">
+
+    <h3>My Statements</h3>
+    <hr />
+
+    <!-- Summary -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-lg-auto">
+        <div class="text-muted">Account</div>
+        <div class="fw-semibold">@Model.AccountNumber (@Model.AccountType)</div>
+      </div>
+      <div class="col-6 col-lg-auto">
+        <div class="text-muted">Current balance</div>
+        <div class="fw-semibold">@Money(Model.CurrentBalance)</div>
+      </div>
+      <div class="col-6 col-lg-auto">
+        <div class="text-muted">Available balance</div>
+        <div class="fw-semibold">@Money(Model.AvailableBalance)</div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Account</th>
+            <th>Destination</th>
+            <th class="text-end">Amount</th>
+            <th>Date (Local)</th>
+            <th>Time (Local)</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+        @if (!hasRows)
+        {
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">No transactions to display.</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var t in Model.Transactions)
+          {
+            <tr>
+              <td>@t.TransactionID</td>
+              <td>
+                @{
+                    var typeFull = t.TransactionType switch
+                    {
+                        "D" => "Deposit",
+                        "W" => "Withdrawal",
+                        "T" => "Transfer",
+                        "S" => "Service Charge",
+                        "B" => "BillPay",
+                        _   => t.TransactionType
+                    };
+                }
+                @typeFull
+              </td>
+              <td>@t.AccountNumber</td>
+              <td>@(t.DestinationAccountNumber?.ToString() ?? "—")</td>
+              <td class="text-end">@Money(t.Amount)</td>
+              <td>@D(t.TransactionTimeLocal)</td>
+              <td>@Tm(t.TransactionTimeLocal)</td>
+              <td>@(string.IsNullOrWhiteSpace(t.Comment) ? "—" : t.Comment)</td>
+            </tr>
+          }
+        }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mt-2">
+      <div class="text-muted">Page <strong>@Model.Page</strong> of <strong>@Model.TotalPages</strong></div>
+      <div class="btn-group" role="group" aria-label="Pager">
+        <a class="btn btn-outline-secondary @(Model.Page <= 1 ? "disabled" : "")"
+           asp-action="Index"
+           asp-route-accountNumber="@Model.AccountNumber"
+           asp-route-page="@(Model.Page - 1)">Previous</a>
+
+        <a class="btn btn-outline-secondary @(Model.Page >= Model.TotalPages ? "disabled" : "")"
+           asp-action="Index"
+           asp-route-accountNumber="@Model.AccountNumber"
+           asp-route-page="@(Model.Page + 1)">Next</a>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Back to Accounts</a>
+      <a class="btn btn-outline-primary"
+         asp-action="Print"
+         asp-route-accountNumber="@Model.AccountNumber"
+         target="_blank">
+        Print Transaction History
+      </a>
+    </div>
+
+  </div>
+</div>

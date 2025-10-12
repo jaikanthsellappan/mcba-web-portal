@@ -1,0 +1,6 @@
+@mcbaAdminAPI_HostAddress = http://localhost:5193
+
+GET {{mcbaAdminAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

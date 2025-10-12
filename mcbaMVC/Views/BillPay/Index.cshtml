@@ -1,0 +1,106 @@
+@model IEnumerable<mcbaMVC.Models.BillPay>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "BillPay";
+
+    string D(DateTime dt) => dt.ToLocalTime().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+    string T(DateTime dt) => dt.ToLocalTime().ToString("hh:mm tt", CultureInfo.InvariantCulture);
+    string PeriodText(string? p) => p == "M" ? "Monthly" : "Once";
+    string StatusText(string? s) => s switch
+    {
+        "S" => "Scheduled",
+        "P" => "Processing",
+        "D" => "Paid",
+        "F" => "Failed",
+        "C" => "Cancelled",
+        "B" => "Blocked",
+        _   => s ?? "—"
+    };
+
+    string StatusBadge(string? s) => s switch
+    {
+        "B" => "badge bg-danger text-light",      // Blocked → red
+        "F" => "badge bg-warning text-dark",      // Failed → yellow
+        "C" => "badge bg-secondary text-light",   // Cancelled → grey
+        "D" => "badge bg-success text-light",     // Paid → green
+        "S" => "badge bg-info text-dark",         // Scheduled → blue
+        "P" => "badge bg-primary text-light",     // Processing → dark blue
+        _   => "badge bg-light text-dark"         // Default
+    };
+
+    bool any = Model != null && Model.Any();
+}
+
+<div class="transaction-page">
+  <div class="transaction-card mx-auto shadow-sm p-4 rounded" style="max-width: 1200px;">
+
+    <h3 class="mb-3">Scheduled Payments</h3>
+    <hr />
+
+    @if (TempData["Toast"] is string toast)
+    {
+        <div class="alert alert-success mb-3">@toast</div>
+    }
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-primary" asp-action="Create">Schedule New Payment</a>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Back to Accounts</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>Account</th>
+            <th>Payee</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Period</th>
+            <th>Status</th>
+            <th>Error</th>
+            <th>Cancel Button</th>
+          </tr>
+        </thead>
+        <tbody>
+        @if (!any)
+        {
+            <tr>
+              <td colspan="9" class="text-center text-muted py-4">
+                No scheduled payments yet.
+              </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var b in Model)
+            {
+                <tr>
+                  <td>@b.AccountNumber</td>
+                  <td>@b.Payee?.Name</td>
+                  <td>@b.Amount.ToString("C")</td>
+                  <td>@D(b.ScheduleTimeUtc)</td>
+                  <td>@T(b.ScheduleTimeUtc)</td>
+                  <td>@PeriodText(b.Period)</td>
+                  <td><span class="@StatusBadge(b.Status)">@StatusText(b.Status)</span></td>
+                  <td>@(string.IsNullOrWhiteSpace(b.LastError) ? "—" : b.LastError)</td>
+                  <td>
+                    @if (b.Status == "S" || b.Status == "B")
+                    {
+                      <form method="post" asp-action="Cancel" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@b.BillPayID" />
+                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                      </form>
+                    }
+                  </td>
+                </tr>
+            }
+        }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

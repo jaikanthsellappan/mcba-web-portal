@@ -1,0 +1,85 @@
+﻿@model IEnumerable<mcbaAdminPortal.Controllers.BillPayVM>
+@{
+    ViewData["Title"] = "BillPay";
+}
+
+<div class="container mt-3">
+    <h2>Scheduled Payments</h2>
+
+    @if (TempData["Msg"] != null)
+    {
+        <div class="alert alert-info">@TempData["Msg"]</div>
+    }
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Account</th>
+                <th>Payee</th>
+                <th>Amount</th>
+                <th>Schedule (Local)</th>
+                <th>Period</th>
+                <th>Status</th>
+                <th style="width: 160px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var b in Model)
+        {
+            // Convert short code to readable text + badge color
+            string label = b.Status switch
+            {
+                "B" => "Blocked",
+                "S" => "Scheduled",
+                "C" => "Cancelled",
+                "F" => "Failed",
+                    "D" => "Completed",
+                _ => b.Status ?? "Unknown"
+            };
+
+            string badgeClass = label switch
+            {
+                "Blocked" => "bg-danger",
+                "Cancelled" => "bg-danger",
+                "Failed" => "bg-warning text-dark",
+                "Completed" => "bg-success",
+                _ => "bg-secondary"
+            };
+
+            <tr>
+                <td>@b.BillPayID</td>
+                <td>@b.AccountNumber</td>
+                <td>@b.PayeeID</td>
+                <td>@b.Amount.ToString("C")</td>
+                <td>@b.ScheduleTimeUtc.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</td>
+
+                <td>@b.Period</td>
+                <td><span class="badge @badgeClass">@label</span></td>
+                <td>
+                    @if (b.Status == "B")
+                    {
+                        <form asp-action="Unblock" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@b.BillPayID" />
+                            <button class="btn btn-sm btn-outline-success">Unblock</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Block" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@b.BillPayID" />
+                            <button class="btn btn-sm btn-outline-danger">Block</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a asp-controller="Payees" asp-action="Index" class="btn btn-outline-secondary">Back to Payees</a>
+</div>
