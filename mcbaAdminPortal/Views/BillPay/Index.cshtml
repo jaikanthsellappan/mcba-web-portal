@@ -36,15 +36,16 @@
             {
                 "B" => "Blocked",
                 "S" => "Scheduled",
-                "C" => "Completed",
+                "C" => "Cancelled",
                 "F" => "Failed",
-                "D" => "Delayed",
+                    "D" => "Completed",
                 _ => b.Status ?? "Unknown"
             };
 
             string badgeClass = label switch
             {
                 "Blocked" => "bg-danger",
+                "Cancelled" => "bg-danger",
                 "Failed" => "bg-warning text-dark",
                 "Completed" => "bg-success",
                 _ => "bg-secondary"

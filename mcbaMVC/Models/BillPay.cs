@@ -31,7 +31,7 @@ namespace mcbaMVC.Models
         // NEW: lifecycle status (Scheduled/Processing/Paid/Failed/Cancelled)
         // Using 1-letter codes to match your current pattern.
         [Required]
-        [RegularExpression(@"^[SPFCD]$", ErrorMessage = "Status must be S, P, F, C, B or D.")]
+        [RegularExpression(@"^[SPFCDB]$", ErrorMessage = "Status must be S, P, F, C, B or D.")]
         [StringLength(1)]
         public string Status { get; set; } = "S"; // S=Scheduled, P=Processing, F=Failed, C=Cancelled, B=Blocked, D=Paid (Done)
 

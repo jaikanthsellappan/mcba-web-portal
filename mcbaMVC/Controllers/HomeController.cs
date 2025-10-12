@@ -1,5 +1,5 @@
 ﻿using mcbaMVC.Data;
-using mcbaMVC.Models;
+using mcbaMVC.ViewModels;
 using mcbaMVC.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

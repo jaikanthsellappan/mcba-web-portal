@@ -80,7 +80,7 @@ namespace mcbaMVC.Data
                             AccountNumber       = acc.AccountNumber,
                             Amount              = t.Amount,
                             TransactionTimeUtc  = txTime,
-                            Comment             = null
+                            Comment             = t.Comment
                         });
 
                         balance += t.Amount;

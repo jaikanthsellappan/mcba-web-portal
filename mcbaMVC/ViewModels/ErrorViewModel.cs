@@ -1,4 +1,4 @@
-namespace mcbaMVC.Models
+namespace mcbaMVC.ViewModels
 {
     public class ErrorViewModel
     {

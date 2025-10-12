@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using mcbaMVC.Data;
-using mcbaMVC.Models;
+using mcbaMVC.ViewModels;
 using mcbaMVC.Infrastructure;   // SessionKeys
 
 namespace mcbaMVC.Controllers
