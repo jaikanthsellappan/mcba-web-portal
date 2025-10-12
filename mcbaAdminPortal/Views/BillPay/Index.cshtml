@@ -31,25 +31,36 @@
         <tbody>
         @foreach (var b in Model)
         {
+            // Convert short code to readable text + badge color
+            string label = b.Status switch
+            {
+                "B" => "Blocked",
+                "S" => "Scheduled",
+                "C" => "Completed",
+                "F" => "Failed",
+                "D" => "Delayed",
+                _ => b.Status ?? "Unknown"
+            };
+
+            string badgeClass = label switch
+            {
+                "Blocked" => "bg-danger",
+                "Failed" => "bg-warning text-dark",
+                "Completed" => "bg-success",
+                _ => "bg-secondary"
+            };
+
             <tr>
                 <td>@b.BillPayID</td>
                 <td>@b.AccountNumber</td>
                 <td>@b.PayeeID</td>
                 <td>@b.Amount.ToString("C")</td>
-                <td>@b.ScheduleTimeUtc.ToLocalTime()</td>
+                <td>@b.ScheduleTimeUtc.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</td>
+
                 <td>@b.Period</td>
+                <td><span class="badge @badgeClass">@label</span></td>
                 <td>
-                    @if (string.Equals(b.Status, "Blocked", StringComparison.OrdinalIgnoreCase))
-                    {
-                        <span class="badge bg-danger">Blocked</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success">@b.Status</span>
-                    }
-                </td>
-                <td>
-                    @if (string.Equals(b.Status, "Blocked", StringComparison.OrdinalIgnoreCase))
+                    @if (b.Status == "B")
                     {
                         <form asp-action="Unblock" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@b.BillPayID" />

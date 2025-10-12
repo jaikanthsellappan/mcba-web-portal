@@ -33,7 +33,7 @@ namespace mcbaAdminPortal.Controllers
             try
             {
                 var client = CreateClientWithToken();
-                var response = await client.GetAsync($"{_apiBaseUrl}api/BillPay");
+                var response = await client.GetAsync($"{_apiBaseUrl}api/BillPays");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -58,7 +58,7 @@ namespace mcbaAdminPortal.Controllers
         public async Task<IActionResult> Block(int id)
         {
             var client = CreateClientWithToken();
-            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPay/block/{id}", null);
+            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPays/block/{id}", null);
 
             TempData["Msg"] = response.IsSuccessStatusCode
                 ? "✅ Payment successfully blocked."
@@ -71,7 +71,7 @@ namespace mcbaAdminPortal.Controllers
         public async Task<IActionResult> Unblock(int id)
         {
             var client = CreateClientWithToken();
-            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPay/unblock/{id}", null);
+            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPays/unblock/{id}", null);
 
             TempData["Msg"] = response.IsSuccessStatusCode
                 ? "✅ Payment successfully unblocked."

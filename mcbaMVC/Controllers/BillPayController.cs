@@ -122,7 +122,7 @@ namespace mcbaMVC.Controllers
                 .Include(b => b.Account)
                 .FirstOrDefaultAsync(b => b.BillPayID == id && b.Account.CustomerID == cid.Value);
 
-            if (bill is not null && bill.Status == "S")
+            if (bill is not null && (bill.Status == "S" || bill.Status == "B"))
             {
                 bill.Status = "C";
                 bill.LastAttemptUtc = DateTime.UtcNow;

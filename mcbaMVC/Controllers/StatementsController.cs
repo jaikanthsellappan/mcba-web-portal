@@ -15,6 +15,24 @@ namespace mcbaMVC.Controllers
         {
             _db = db;
         }
+        [HttpGet]
+public async Task<IActionResult> SelectAccount()
+{
+    var cid = HttpContext.Session.GetInt32(SessionKeys.LoggedInCustomerId);
+    if (cid is null) 
+        return RedirectToAction("Index", "Login");
+
+    var accounts = await _db.Accounts
+        .AsNoTracking()
+        .Where(a => a.CustomerID == cid)
+        .OrderBy(a => a.AccountNumber)
+        .ToListAsync();
+
+    if (accounts.Count == 0)
+        return RedirectToAction("Index", "Home");
+
+    return View(accounts);
+}
 
         // GET /Statements?accountNumber=4100&page=1
         public async Task<IActionResult> Index(int? accountNumber, int page = 1)

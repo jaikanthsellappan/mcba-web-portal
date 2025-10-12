@@ -20,39 +20,41 @@
 
         <div class="mb-3">
             <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <input asp-for="Name" class="form-control" placeholder="Enter payee name (e.g., Rob Pty Ltd)" />
         </div>
 
         <div class="mb-3">
             <label asp-for="Address" class="form-label"></label>
-            <input asp-for="Address" class="form-control" />
+            <input asp-for="Address" class="form-control" placeholder="e.g., 1 Rob Street" />
         </div>
 
         <div class="mb-3">
             <label asp-for="City" class="form-label"></label>
-            <input asp-for="City" class="form-control" />
+            <input asp-for="City" class="form-control" placeholder="e.g., Melbourne" />
         </div>
 
         <div class="mb-3">
             <label asp-for="State" class="form-label"></label>
-            <input asp-for="State" class="form-control" placeholder="VIC/NSW/QLD/..." />
+            <input asp-for="State" class="form-control" placeholder="VIC / NSW / QLD" />
+            <small class="text-muted">Enter a 2–3 letter state abbreviation.</small>
         </div>
 
         <div class="mb-3">
             <label asp-for="Postcode" class="form-label"></label>
-            <input asp-for="Postcode" class="form-control" />
+            <input asp-for="Postcode" class="form-control" placeholder="e.g., 3000" />
+            <small class="text-muted">Postcode must contain 4 digits (e.g., 3000).</small>
         </div>
 
         <div class="mb-3">
             <label asp-for="Phone" class="form-label"></label>
-            <input asp-for="Phone" class="form-control" />
+            <input asp-for="Phone" class="form-control" placeholder="e.g., 03 9123 4567 or (03) 9123 4567" />
+            <small class="text-muted">Use format 03 9123 4567 or (03) 9123 4567. Brackets are optional.</small>
         </div>
 
         <div class="d-flex gap-2">
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
-</div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        </div>
     </form>
 </div>
 
