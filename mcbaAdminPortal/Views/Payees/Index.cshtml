@@ -1,45 +1,70 @@
-﻿@model IEnumerable<mcbaAdminPortal.Controllers.Payee>
+﻿@model IEnumerable<mcbaAdminPortal.Models.Payee>
+@{
+    ViewData["Title"] = "Payees";
+    var postcode = ViewBag.Postcode as string;
+}
 
-<div class="container mt-4">
+<div class="container mt-3">
     <h2>Payees</h2>
 
-    <form method="get" class="mb-3 d-flex gap-2">
-        <input type="text" name="postcode" class="form-control" placeholder="Filter by postcode" />
-        <button class="btn btn-outline-primary">Filter</button>
-    </form>
-
+    @if (TempData["Msg"] != null)
+    {
+        <div class="alert alert-success">@TempData["Msg"]</div>
+    }
     @if (ViewBag.Error != null)
     {
         <div class="alert alert-danger">@ViewBag.Error</div>
     }
-    else if (Model != null)
+
+    <!-- Filter Bar -->
+    <form method="get" class="d-flex gap-2 mb-3 align-items-center">
+        <input name="postcode" class="form-control" placeholder="Filter by postcode" value="@postcode" />
+        <button class="btn btn-outline-primary">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-primary d-flex align-items-center justify-content-center">Clear</a>
+        <a asp-controller="BillPay"
+           asp-action="Index"
+           class="btn btn-outline-primary d-flex align-items-center justify-content-center">
+           Manage BillPay
+        </a>
+    </form>
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postcode</th>
+                <th>Phone</th>
+                <th style="width:90px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+@if (Model == null || !Model.Any())
+{
+    <tr>
+        <td colspan="6" class="text-center text-muted py-3">
+            No records found for the entered postcode.
+        </td>
+    </tr>
+}
+else
+{
+    @foreach (var p in Model)
     {
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Postcode</th>
-                    <th>Phone</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in Model)
-                {
-                    <tr>
-                        <td>@p.Name</td>
-                        <td>@p.City</td>
-                        <td>@p.State</td>
-                        <td>@p.Postcode</td>
-                        <td>@p.Phone</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@p.PayeeID" class="btn btn-sm btn-warning">Edit</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <tr>
+            <td>@p.Name</td>
+            <td>@p.City</td>
+            <td>@p.State</td>
+            <td>@p.Postcode</td>
+            <td>@p.Phone</td>
+            <td>
+                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@p.PayeeID">Edit</a>
+            </td>
+        </tr>
     }
+}
+</tbody>
+
+    </table>
 </div>

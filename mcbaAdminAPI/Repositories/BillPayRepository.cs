@@ -9,11 +9,20 @@ namespace mcbaAdminAPI.Repositories
         private readonly MCBAContext _context;
         public BillPayRepository(MCBAContext context) => _context = context;
 
-        public async Task<IEnumerable<BillPay>> GetAllAsync() =>
-            await _context.BillPays.Include(b => b.Payee).ToListAsync();
+        public async Task<IEnumerable<BillPay>> GetAllAsync()
+{
+    // Force EF to always read from the database, not memory
+    _context.ChangeTracker.Clear(); 
+
+    return await _context.BillPays
+        .Include(b => b.Payee)
+        .AsNoTracking()  // no caching or stale entity tracking
+        .OrderBy(b => b.BillPayID)
+        .ToListAsync();
+}
 
         public async Task<BillPay?> GetByIdAsync(int id) =>
-            await _context.BillPays.FindAsync(id);
+            await _context.BillPays.AsNoTracking().FirstOrDefaultAsync(b => b.BillPayID == id);
 
         public async Task BlockAsync(int id)
         {
@@ -34,6 +43,5 @@ namespace mcbaAdminAPI.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
     }
 }

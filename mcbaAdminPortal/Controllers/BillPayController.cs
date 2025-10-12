@@ -7,34 +7,33 @@ namespace mcbaAdminPortal.Controllers
     public class BillPayController : Controller
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly string _apiBase = "https://localhost:7149/api/BillPay";
+        private readonly string _apiBaseUrl;
 
-        public BillPayController(IHttpClientFactory clientFactory)
+        public BillPayController(IHttpClientFactory clientFactory, IConfiguration config)
         {
             _clientFactory = clientFactory;
+            _apiBaseUrl = config["ApiSettings:BaseUrl"] ?? "";
         }
 
         private HttpClient CreateClientWithToken()
         {
             var token = HttpContext.Session.GetString("JWTToken");
             var client = _clientFactory.CreateClient();
-            if (token != null)
+            if (!string.IsNullOrWhiteSpace(token))
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
 
-        // ----------------- LIST ALL BILLPAY ENTRIES -----------------
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Session.GetString("JWTToken");
-            if (token == null)
+            if (HttpContext.Session.GetString("JWTToken") == null)
                 return RedirectToAction("Login", "Auth");
 
             try
             {
                 var client = CreateClientWithToken();
-                var response = await client.GetAsync(_apiBase);
+                var response = await client.GetAsync($"{_apiBaseUrl}api/BillPays");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -55,12 +54,11 @@ namespace mcbaAdminPortal.Controllers
             }
         }
 
-        // ----------------- BLOCK A BILL -----------------
         [HttpPost]
         public async Task<IActionResult> Block(int id)
         {
             var client = CreateClientWithToken();
-            var response = await client.PutAsync($"{_apiBase}/block/{id}", null);
+            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPays/block/{id}", null);
 
             TempData["Msg"] = response.IsSuccessStatusCode
                 ? "✅ Payment successfully blocked."
@@ -69,12 +67,11 @@ namespace mcbaAdminPortal.Controllers
             return RedirectToAction("Index");
         }
 
-        // ----------------- UNBLOCK A BILL -----------------
         [HttpPost]
         public async Task<IActionResult> Unblock(int id)
         {
             var client = CreateClientWithToken();
-            var response = await client.PutAsync($"{_apiBase}/unblock/{id}", null);
+            var response = await client.PutAsync($"{_apiBaseUrl}api/BillPays/unblock/{id}", null);
 
             TempData["Msg"] = response.IsSuccessStatusCode
                 ? "✅ Payment successfully unblocked."
@@ -84,7 +81,6 @@ namespace mcbaAdminPortal.Controllers
         }
     }
 
-    // ----------------- BILLPAY VIEWMODEL -----------------
     public class BillPayVM
     {
         public int BillPayID { get; set; }
