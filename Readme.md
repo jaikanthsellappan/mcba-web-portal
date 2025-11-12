@@ -4,18 +4,19 @@ A three-tier ASP.NET Core MVC banking solution, built on .NET 9.0 and Azure SQL 
 
 ##  Project Structure
 
+```
 MCBA Web Portal/
-├── mcbaMVC → Customer Internet Banking Website (Presentation Layer)
-│ ├── Data → EF Core DbContext and Migrations
-│ ├── Controllers → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
-│ ├── ViewModels → Strongly-typed ViewModels for MVC Views
-│ └── Test → Unit tests for backend endpoints
-├── mcbaAdminAPI → Secure Admin Web API (Business + Data Layer)
-│ └── Repositories → Repository Pattern Implementation
-├── mcbaAdminPortal → Admin Portal Website (Consumes API)
-├── Trello/ → Screenshots showing project progress
+├── mcbaMVC                  → Customer Internet Banking Website (Presentation Layer)
+│   ├── Data                 → EF Core DbContext and Migrations
+│   ├── Controllers          → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
+│   ├── ViewModels           → Strongly-typed ViewModels for MVC Views
+│   └── Test                 → Unit tests for backend endpoints
+├── mcbaAdminAPI             → Secure Admin Web API (Business + Data Layer)
+│   └── Repositories         → Repository Pattern Implementation
+├── mcbaAdminPortal          → Admin Portal Website (Consumes API)
+├── Trello/                  → Screenshots showing project progress
 └── README.md
-
+```
 
 ##  Application Overview
 
