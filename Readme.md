@@ -14,8 +14,6 @@ MCBA Web Portal
 ```
 ```
 
-**Paste the above snippet as-is in your README.md**. This preserves the indents and special characters, and ensures the project structure renders properly within a monospaced code block.
-
 
 ## 1. Application Overview
 
