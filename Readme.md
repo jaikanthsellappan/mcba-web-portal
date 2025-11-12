@@ -1,26 +1,20 @@
-﻿Name & Student Id:
-Jaikanth Sellappan - s4062691
-Sourav Madan - s4069038
-Jaswant Seetha - s4098363
-
-Group Number: 40
-
-Git hub repo url => https://github.com/rmit-wdt-s2-2025/s4062691-s4069038-s4098363-a2/tree/main
-
 ### Project Structure:
- MCBA Solution
- ┣ mcbaMVC              → Customer Internet Banking Website (Presentation Layer)
- ┣ mcbaAdminAPI         → Secure Admin Web API (Business + Data Layer)
- ┣ mcbaAdminPortal      → Admin Portal Website (Consumes API)
- ┣ mcbaMVC/Data         → EF Core DbContext and Migrations
- ┣ mcbaMVC/Controllers  → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
- ┣ mcbaMVC/ViewModels   → Strongly-typed ViewModels for MVC Views
- ┣ mcbaMVC/Test         → Unit test to test the backend end points
- ┣ mcbaAdminAPI/Repositories → Repository Pattern Implementation
- ┣ Trello/              → Screenshots showing project progress
- ┗ README.md
+```
+MCBA Solution
+┣ mcbaMVC                 → Customer Internet Banking Website (Presentation Layer)
+┣ mcbaAdminAPI            → Secure Admin Web API (Business + Data Layer)
+┣ mcbaAdminPortal         → Admin Portal Website (Consumes API)
+┣ mcbaMVC/Data            → EF Core DbContext and Migrations
+┣ mcbaMVC/Controllers     → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
+┣ mcbaMVC/ViewModels      → Strongly-typed ViewModels for MVC Views
+┣ mcbaMVC/Test            → Unit test to test the backend end points
+┣ mcbaAdminAPI/Repositories → Repository Pattern Implementation
+┣ Trello/                 → Screenshots showing project progress
+┗ README.md
+```
+```
 
-
+**Paste the above snippet as-is in your README.md**. This preserves the indents and special characters, and ensures the project structure renders properly within a monospaced code block.
 
 
 ## 1. Application Overview
@@ -65,7 +59,7 @@ This project implements a three-tier ASP.NET Core MVC banking system built on .N
 
 ## Setup Instructions
 
-    1) Clone the repo from GitHub (private RMIT org repository).
+    1) Clone the repo from GitHub (https://github.com/jaikanthsellappan/mcba-web-portal).
 
     2) Open solution in Visual Studio 2022.
 
