@@ -1,6 +1,6 @@
 ### Project Structure:
 ```
-MCBA Solution
+MCBA Web Portal
 ┣ mcbaMVC                 → Customer Internet Banking Website (Presentation Layer)
 ┣ mcbaAdminAPI            → Secure Admin Web API (Business + Data Layer)
 ┣ mcbaAdminPortal         → Admin Portal Website (Consumes API)
