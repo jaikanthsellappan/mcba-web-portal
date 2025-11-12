@@ -1,74 +1,87 @@
-### Project Structure:
-```
-MCBA Web Portal
-┣ mcbaMVC                 → Customer Internet Banking Website (Presentation Layer)
-┣ mcbaAdminAPI            → Secure Admin Web API (Business + Data Layer)
-┣ mcbaAdminPortal         → Admin Portal Website (Consumes API)
-┣ mcbaMVC/Data            → EF Core DbContext and Migrations
-┣ mcbaMVC/Controllers     → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
-┣ mcbaMVC/ViewModels      → Strongly-typed ViewModels for MVC Views
-┣ mcbaMVC/Test            → Unit test to test the backend end points
-┣ mcbaAdminAPI/Repositories → Repository Pattern Implementation
-┣ Trello/                 → Screenshots showing project progress
-┗ README.md
-```
-```
+# MCBA Web Portal
+
+A three-tier ASP.NET Core MVC banking solution, built on .NET 9.0 and Azure SQL Server, designed for enterprise-grade modularity, security, and maintainability.
+
+##  Project Structure
+
+MCBA Web Portal/
+├── mcbaMVC → Customer Internet Banking Website (Presentation Layer)
+│ ├── Data → EF Core DbContext and Migrations
+│ ├── Controllers → Deposit, Withdraw, Transfer, Profile, Statement, BillPay
+│ ├── ViewModels → Strongly-typed ViewModels for MVC Views
+│ └── Test → Unit tests for backend endpoints
+├── mcbaAdminAPI → Secure Admin Web API (Business + Data Layer)
+│ └── Repositories → Repository Pattern Implementation
+├── mcbaAdminPortal → Admin Portal Website (Consumes API)
+├── Trello/ → Screenshots showing project progress
+└── README.md
 
 
-## 1. Application Overview
+##  Application Overview
 
-This project implements a three-tier ASP.NET Core MVC banking system built on .NET 9.0 and Azure SQL Server, following the assignment’s architecture:
+**MCBA Web Portal** implements a scalable three-layered banking platform featuring:
 
-# mcbaMVC – Customer Website
+### 1. Customer Portal (`mcbaMVC`)
+- Deposit, Withdraw, and Transfer operations
+- My Statements (paged transactions)
+- My Profile (view/edit/change password)
+- BillPay management with persistent scheduler
+- Authentication via hashed passwords
+- Secure login/logout using sessions
+- EF Core ORM & Data Annotations for validation
 
-    Deposit, Withdraw, Transfer
+### 2. Admin Web API (`mcbaAdminAPI`)
+- Exposes endpoints for payee & bill payment management
+- Repository Pattern for maintainable data access logic
+- JWT Authentication for all admin operations
+- Swagger UI with JWT input for secure API testing
 
-    My Statements (paged transactions)
+### 3. Admin Portal (`mcbaAdminPortal`)
+- Standalone ASP.NET Core MVC app consuming the Admin API
+- Manage payees (filter/edit)
+- Block/unblock scheduled bill payments
+- Responsive Bootstrap UI with dynamic feedback and notifications
 
-    My Profile (view / edit / change password)
 
-    BillPay management with persistent scheduler
+##  Setup Instructions
 
-    Authentication via hashed passwords (SimpleHashing.Net)
+1. **Clone the repository:**
+git clone https://github.com/jaikanthsellappan/mcba-web-portal.git
 
-    Login and Logout using sessions
+2. **Open the solution in Visual Studio 2022.**
 
-    EF Core ORM / Data Annotations for validation
+3. **Set your Azure SQL connection string**  
+Update `appsettings.json` for each project to point to your database.
 
-# mcbaAdminAPI – Web API for administrative operations
+4. **Apply Entity Framework Migrations**  
+Use Package Manager Console
 
-    Exposes endpoints for Payee and BillPay management
 
-    Uses Repository Pattern for clean data access
+5. **Start the projects:**
+- `mcbaMVC` → Customer site
+- `mcbaAdminAPI` → Swagger API for admins
+- `mcbaAdminPortal` → Admin portal
 
-    JWT Authentication 
+##  Technologies Used
 
-    Swagger UI with JWT input for testing
+- **Frontend:** ASP.NET Core MVC, Bootstrap 5
+- **Backend:** ASP.NET Core, EF Core, JWT, Swagger, Repository Pattern
+- **Database:** Azure SQL Server, EF Core Migrations
+- **Testing:** xUnit (unit tests in `mcbaMVC/Test`)
+- **DevOps:** Git, Visual Studio 2022
 
-# mcbaAdminPortal – Admin Interface
 
-    Independent ASP.NET Core MVC site consuming the Admin API
+##  Security Highlights
 
-    Manage Payees (Filter / Edit)
+- All passwords securely hashed with SimpleHashing.Net
+- JWT Authentication for protected admin and API routes
+- Validation and authorization enforced on server endpoints
 
-    Block / Unblock Scheduled Bill Payments
 
-    Responsive Bootstrap UI with TempData feedback
+##  Progress & Screenshots
 
-## Setup Instructions
+Project progress screenshots are included in the `/Trello` directory.
 
-    1) Clone the repo from GitHub (https://github.com/jaikanthsellappan/mcba-web-portal).
 
-    2) Open solution in Visual Studio 2022.
+> For any additional setup or troubleshooting details, see code comments inside each project and the inline documentation in the API.
 
-    3) Set connection string in appsettings.json
-
-    4) Run EF migrations
-
-    5) start projects:
-
-        mcbaMVC → Customer site 
-
-        mcbaAdminAPI → Swagger API 
-
-        mcbaAdminPortal → Admin portal 
